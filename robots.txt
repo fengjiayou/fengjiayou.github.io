@@ -1,0 +1,8 @@
+User-agent: Baiduspider
+
+Sitemap: https://blog.fengmayou.top/baidusitemap.xml
+
+User-agent: *
+Disallow:
+
+Sitemap: https://blog.fengmayou.top/sitemap.xml
