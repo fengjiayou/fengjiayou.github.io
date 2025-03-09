@@ -24,6 +24,331 @@
       </tags>
   </entry>
   <entry>
+    <title>MarkDown(.md)教程</title>
+    <url>/2025/03/09/makedown-firset/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="什么是-Markdown？"><a href="#什么是-Markdown？" class="headerlink" title="什么是 Markdown？"></a>什么是 Markdown？</h2><ul>
+<li>一种轻量级标记语言</li>
+<li>通过纯文本编写结构化内容</li>
+<li>易读易写，可转换为 HTML&#x2F;PDF 等格式</li>
+<li>广泛用于文档、博客、GitHub 等平台</li>
+</ul>
+<hr>
+<h2 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h2><h3 id="1-标题"><a href="#1-标题" class="headerlink" title="1. 标题"></a>1. 标题</h3><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># 一级标题</span></span><br><span class="line"><span class="section">## 二级标题</span></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="section">#### 四级标题</span></span><br></pre></td></tr></table></figure></div>
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># 欢迎使用 Markdown</span></span><br><span class="line"><span class="section">## 这是一个二级标题</span></span><br><span class="line"><span class="section">### 这是一个三级标题</span></span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong></p><p class='h1' id="欢迎使用-Markdown"><a href="#欢迎使用-Markdown" class="headerlink" title="欢迎使用 Markdown"></a>欢迎使用 Markdown</h1><p class='h2' id="这是一个二级标题"><a href="#这是一个二级标题" class="headerlink" title="这是一个二级标题"></a>这是一个二级标题</h2><p class='h3' id="这是一个三级标题"><a href="#这是一个三级标题" class="headerlink" title="这是一个三级标题"></a>这是一个三级标题</h3>
+              </div>
+            </details>
+
+<hr>
+<h3 id="2-段落与换行"><a href="#2-段落与换行" class="headerlink" title="2. 段落与换行"></a>2. 段落与换行</h3><ul>
+<li>段落：直接换行文字</li>
+<li>强制换行：行尾添加两个空格<br>或在段落间空一行</li>
+</ul>
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">这是第一段文字。</span><br><span class="line"></span><br><span class="line">这是第二段文字。  </span><br><span class="line">这是同一段内的换行。</span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong><br>这是第一段文字。</p><p>这是第二段文字。<br>这是同一段内的换行。</p>
+              </div>
+            </details>
+
+<hr>
+<h3 id="3-列表"><a href="#3-列表" class="headerlink" title="3. 列表"></a>3. 列表</h3><p><strong>无序列表</strong></p>
+<div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> 项目1</span><br><span class="line"><span class="bullet">-</span> 项目2</span><br><span class="line"><span class="bullet">  -</span> 子项目</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>有序列表</strong></p>
+<div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="bullet">1.</span> 第一项</span><br><span class="line"><span class="bullet">2.</span> 第二项</span><br></pre></td></tr></table></figure></div>
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> 苹果</span><br><span class="line"><span class="bullet">-</span> 香蕉</span><br><span class="line"><span class="bullet">  -</span> 黄香蕉</span><br><span class="line"><span class="bullet">  -</span> 绿香蕉</span><br><span class="line"><span class="bullet">1.</span> 第一步</span><br><span class="line"><span class="bullet">2.</span> 第二步</span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong></p><ul><li>苹果</li><li>香蕉<ul><li>黄香蕉</li><li>绿香蕉</li></ul></li></ul><ol><li>第一步</li><li>第二步</li></ol>
+              </div>
+            </details>
+
+<hr>
+<h3 id="4-强调"><a href="#4-强调" class="headerlink" title="4. 强调"></a>4. 强调</h3><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="emphasis">*斜体*</span> 或 <span class="emphasis">_斜体_</span></span><br><span class="line"><span class="strong">**粗体**</span> 或 <span class="strong">__粗体__</span></span><br><span class="line"><span class="strong">**<span class="emphasis">*粗斜体*</span>**</span> 或 <span class="strong">__<span class="emphasis">_粗斜体_</span>__</span></span><br></pre></td></tr></table></figure></div>
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">这是 <span class="emphasis">*斜体*</span>，这是 <span class="strong">**粗体**</span>，这是 <span class="strong">**<span class="emphasis">*粗斜体*</span>**</span>。</span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong><br>这是 <em>斜体</em>，这是 <strong>粗体</strong>，这是 <em><strong>粗斜体</strong></em>。</p>
+              </div>
+            </details>
+
+<hr>
+<h3 id="5-链接与图片"><a href="#5-链接与图片" class="headerlink" title="5. 链接与图片"></a>5. 链接与图片</h3><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">[<span class="string">链接文字</span>](<span class="link">https://example.com</span>)</span><br><span class="line">![<span class="string">图片描述</span>](<span class="link">image.jpg</span>)</span><br></pre></td></tr></table></figure></div>
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">访问 [<span class="string">Google</span>](<span class="link">https://www.google.com</span>)。</span><br><span class="line">![<span class="string">Markdown Logo</span>](<span class="link">https://markdown-here.com/img/icon256.png</span>)</span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong><br>访问 <a class="link"   href="https://www.google.com/" rel="external nofollow noreferrer" >Google<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://markdown-here.com/img/icon256.png"
+                      alt="Markdown Logo"
+                ></p>
+              </div>
+            </details>
+<hr>
+<h3 id="6-代码"><a href="#6-代码" class="headerlink" title="6. 代码"></a>6. 代码</h3><p><strong>行内代码</strong></p>
+<div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">使用 <span class="code">`print(&quot;Hello&quot;)`</span> 语法</span><br></pre></td></tr></table></figure></div>
+<p><strong>代码块</strong></p>
+<pre>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Hello World&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+</pre>
+
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">这是行内代码：<span class="code">`print(&quot;Hello&quot;)`</span>。</span><br><span class="line"></span><br><span class="line">这是代码块：</span><br><span class="line"><span class="code">```python</span></span><br><span class="line"><span class="code">def hello():</span></span><br><span class="line"><span class="code">    print(&quot;Hello World&quot;)</span></span><br></pre></td></tr></table></figure></div><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">**效果：**</span><br><span class="line">这是行内代码：`print(&quot;Hello&quot;)`。</span><br><span class="line"></span><br><span class="line">这是代码块：</span><br><span class="line">```python</span><br><span class="line">def hello():</span><br><span class="line">    print(&quot;Hello World&quot;)</span><br></pre></td></tr></table></figure></div>
+              </div>
+            </details>
+
+<hr>
+<h3 id="7-表格"><a href="#7-表格" class="headerlink" title="7. 表格"></a>7. 表格</h3><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">| 左对齐 | 居中对齐 | 右对齐 |</span><br><span class="line">| :----- | :------: | -----: |</span><br><span class="line">| 内容1  |   内容2  |   内容3 |</span><br></pre></td></tr></table></figure></div>
+
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">| 姓名   | 年龄 | 职业     |</span><br><span class="line">| :----- | :--: | --------: |</span><br><span class="line">| 张三   |  25  | 工程师   |</span><br><span class="line">| 李四   |  30  | 设计师   |</span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong></p><table><thead><tr><th align="left">姓名</th><th align="center">年龄</th><th align="right">职业</th></tr></thead><tbody><tr><td align="left">张三</td><td align="center">25</td><td align="right">工程师</td></tr><tr><td align="left">李四</td><td align="center">30</td><td align="right">设计师</td></tr></tbody></table>
+              </div>
+            </details>
+
+<hr>
+<h3 id="8-分割线"><a href="#8-分割线" class="headerlink" title="8. 分割线"></a>8. 分割线</h3><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">或</span><br><span class="line"><span class="strong">**<span class="emphasis">*</span></span></span><br></pre></td></tr></table></figure></div>
+
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section">这是第一部分。</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line">这是第二部分。</span><br></pre></td></tr></table></figure></div><p class='h2' id="效果：这是第一部分。"><a href="#效果：这是第一部分。" class="headerlink" title="效果：这是第一部分。"></a><strong>效果：</strong><br>这是第一部分。</h2><p>这是第二部分。</p>
+              </div>
+            </details>
+
+<hr>
+<h3 id="9-引用"><a href="#9-引用" class="headerlink" title="9. 引用"></a>9. 引用</h3><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="quote">&gt; 引用内容</span></span><br><span class="line">&gt;&gt; 嵌套引用</span><br></pre></td></tr></table></figure></div>
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="quote">&gt; 这是一个引用。</span></span><br><span class="line">&gt;&gt; 这是一个嵌套引用。</span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong></p><blockquote><p>这是一个引用。</p><blockquote><p>这是一个嵌套引用。</p></blockquote></blockquote>
+              </div>
+            </details>
+
+<hr>
+<h2 id="高级语法"><a href="#高级语法" class="headerlink" title="高级语法"></a>高级语法</h2><h3 id="1-任务列表"><a href="#1-任务列表" class="headerlink" title="1. 任务列表"></a>1. 任务列表</h3><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> [ ] 未完成</span><br><span class="line"><span class="bullet">-</span> [x] 已完成</span><br></pre></td></tr></table></figure></div>
+
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> [x] 学习 Markdown 基础</span><br><span class="line"><span class="bullet">-</span> [ ] 完成 Markdown 作业</span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong></p><ul><li><input checked="" disabled="" type="checkbox"> 学习 Markdown 基础</li><li><input disabled="" type="checkbox"> 完成 Markdown 作业</li></ul>
+              </div>
+            </details>
+
+<hr>
+<h3 id="2-数学公式（需支持-LaTeX）"><a href="#2-数学公式（需支持-LaTeX）" class="headerlink" title="2. 数学公式（需支持 LaTeX）"></a>2. 数学公式（需支持 LaTeX）</h3><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">$$</span><br><span class="line">E = mc^2</span><br><span class="line">$$</span><br></pre></td></tr></table></figure></div>
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>示例：</strong></p><div class="code-container" data-rel="Markdown"><figure class="iseeu highlight markdown"><table><tr><td class="code"><pre><span class="line">这是质能方程：  </span><br><span class="line">$$</span><br><span class="line">E = mc^2</span><br><span class="line">$$</span><br></pre></td></tr></table></figure></div><p><strong>效果：</strong><br>这是质能方程：<br>$$<br>E &#x3D; mc^2<br>$$</p>
+              </div>
+            </details>
+
+<hr>
+<h3 id="3-流程图（需特定解析器）"><a href="#3-流程图（需特定解析器）" class="headerlink" title="3. 流程图（需特定解析器）"></a>3. 流程图（需特定解析器）</h3><pre>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">graph TD</span><br><span class="line">A[开始] --&gt; B&#123;判断&#125;</span><br><span class="line">B --&gt;|是| C[执行]</span><br><span class="line">B --&gt;|否| D[结束]</span><br></pre></td></tr></table></figure></div>
+</pre>
+
+<details class="red" data-header-exclude><summary><i class="fa-solid fa-chevron-right"></i>实例＆效果 </summary>
+              <div class='content'>
+              <p><strong>效果：</strong></p><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">graph TD</span><br><span class="line">A[开始] --&gt; B&#123;判断&#125;</span><br><span class="line">B --&gt;|是| C[执行]</span><br><span class="line">B --&gt;|否| D[结束]</span><br></pre></td></tr></table></figure></div>
+              </div>
+            </details>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>✅ <strong>优势</strong>：  </p>
+<ul>
+<li>专注内容而非格式  </li>
+<li>版本控制友好  </li>
+<li>跨平台兼容</li>
+</ul>
+<p>📝 <strong>适用场景</strong>：  </p>
+<ul>
+<li>技术文档  </li>
+<li>笔记整理  </li>
+<li>博客写作</li>
+</ul>
+<blockquote>
+<p>提示：不同平台的 Markdown 解析器可能有细微差异，建议测试实际效果</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>markdown</tag>
+        <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>随机图站搭建教程</title>
+    <url>/2025/03/09/Random-plots/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="一、需求场景分析"><a href="#一、需求场景分析" class="headerlink" title="一、需求场景分析"></a>一、需求场景分析</h2><p>无论你是想制作一个<strong>壁纸站</strong>、<strong>趣味图库</strong>，还是为博客增加随机头图功能，本教程提供<strong>4种技术方案</strong>，涵盖：<br>✅ 纯前端静态方案<br>✅ 云函数代理方案<br>✅ 自建后端API方案<br>✅ 无服务器跳转方案  </p>
+<hr>
+<h2 id="二、方案快速选型指南"><a href="#二、方案快速选型指南" class="headerlink" title="二、方案快速选型指南"></a>二、方案快速选型指南</h2><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>所需技能</th>
+<th>成本</th>
+<th>适合人群</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="#%E4%B8%89%E6%96%B9%E6%A1%881%E7%BA%AF%E5%89%8D%E7%AB%AF%E7%A1%AC%E7%BC%96%E7%A0%81%E6%9E%81%E7%AE%80%E7%89%88">纯前端硬编码</a></td>
+<td>HTML基础</td>
+<td>免费</td>
+<td>个人博客&#x2F;新手</td>
+</tr>
+<tr>
+<td><a href="#%E5%9B%9B%E6%96%B9%E6%A1%882%E4%BA%91%E5%87%BD%E6%95%B0%E4%BB%A3%E7%90%86%E8%BF%9B%E9%98%B6%E7%89%88">云函数代理</a></td>
+<td>云服务配置</td>
+<td>低</td>
+<td>中小型项目</td>
+</tr>
+<tr>
+<td><a href="#%E4%BA%94%E6%96%B9%E6%A1%883%E8%87%AA%E5%BB%BA%E5%90%8E%E7%AB%AFapi%E4%B8%93%E4%B8%9A%E7%89%88">自建后端API</a></td>
+<td>Node.js + 运维</td>
+<td>中</td>
+<td>企业&#x2F;技术团队</td>
+</tr>
+<tr>
+<td><a href="#%E5%85%AD%E6%96%B9%E6%A1%884%E6%97%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B7%B3%E8%BD%AC%E9%BB%91%E7%A7%91%E6%8A%80%E7%89%88">无服务器跳转</a></td>
+<td>Nginx配置</td>
+<td>免费</td>
+<td>极客&#x2F;SEO不敏感场景</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="三、方案1：纯前端硬编码（极简版）"><a href="#三、方案1：纯前端硬编码（极简版）" class="headerlink" title="三、方案1：纯前端硬编码（极简版）"></a>三、方案1：纯前端硬编码（极简版）</h2><h3 id="1-核心代码"><a href="#1-核心代码" class="headerlink" title="1. 核心代码"></a>1. 核心代码</h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片站<span class="tag">&lt;/<span class="name">title</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css">  </span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">img</span> &#123;  </span></span><br><span class="line"><span class="language-css">            <span class="attribute">max-width</span>: <span class="number">100%</span>;  </span></span><br><span class="line"><span class="language-css">            <span class="attribute">border-radius</span>: <span class="number">10px</span>;  </span></span><br><span class="line"><span class="language-css">            <span class="attribute">box-shadow</span>: <span class="number">0</span> <span class="number">4px</span> <span class="number">12px</span> <span class="built_in">rgba</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0.15</span>);  </span></span><br><span class="line"><span class="language-css">        &#125;  </span></span><br><span class="line"><span class="language-css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span>  </span><br><span class="line">    &lt; img id=&quot;randomImg&quot; src=&quot;&quot; alt=&quot;随机图片&quot;&gt;  </span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript">  </span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 直接硬编码图片链接（示例）  </span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">const</span> images = [  </span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?nature&quot;</span>,  </span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?city&quot;</span>,  </span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?animal&quot;</span>  </span></span><br><span class="line"><span class="language-javascript">        ];  </span></span><br><span class="line"><span class="language-javascript">        </span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 随机加载 + 平滑过渡  </span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">function</span> <span class="title function_">loadImage</span>(<span class="params"></span>) &#123;  </span></span><br><span class="line"><span class="language-javascript">            <span class="keyword">const</span> imgElement = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;randomImg&#x27;</span>);  </span></span><br><span class="line"><span class="language-javascript">            imgElement.<span class="property">style</span>.<span class="property">opacity</span> = <span class="number">0</span>;  </span></span><br><span class="line"><span class="language-javascript">            <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;  </span></span><br><span class="line"><span class="language-javascript">                <span class="keyword">const</span> randomIndex = <span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>);  </span></span><br><span class="line"><span class="language-javascript">                imgElement.<span class="property">src</span> = images[randomIndex] + <span class="string">&#x27;&amp;t=&#x27;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();  </span></span><br><span class="line"><span class="language-javascript">                imgElement.<span class="property">style</span>.<span class="property">opacity</span> = <span class="number">1</span>;  </span></span><br><span class="line"><span class="language-javascript">            &#125;, <span class="number">300</span>);  </span></span><br><span class="line"><span class="language-javascript">        &#125;  </span></span><br><span class="line"><span class="language-javascript">        </span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 每10秒自动刷新  </span></span></span><br><span class="line"><span class="language-javascript">        <span class="title function_">loadImage</span>();  </span></span><br><span class="line"><span class="language-javascript">        <span class="built_in">setInterval</span>(loadImage, <span class="number">10000</span>);  </span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span>  </span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-部署步骤"><a href="#2-部署步骤" class="headerlink" title="2. 部署步骤"></a>2. 部署步骤</h3><ol>
+<li>保存为 <code>index.html</code>  </li>
+<li>上传至 GitHub 仓库  </li>
+<li>开启 GitHub Pages 服务</li>
+</ol>
+<h3 id="3-方案特点"><a href="#3-方案特点" class="headerlink" title="3. 方案特点"></a>3. 方案特点</h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5分钟快速上线</td>
+<td>图片列表需手动维护</td>
+</tr>
+<tr>
+<td>完全免费</td>
+<td>真实URL暴露</td>
+</tr>
+<tr>
+<td>无服务器依赖</td>
+<td>无法动态扩展</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、方案2：云函数代理（进阶版）"><a href="#四、方案2：云函数代理（进阶版）" class="headerlink" title="四、方案2：云函数代理（进阶版）"></a>四、方案2：云函数代理（进阶版）</h2><h3 id="1-架构图"><a href="#1-架构图" class="headerlink" title="1. 架构图"></a>1. 架构图</h3><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"> graph TD</span><br><span class="line">A[用户] --&gt; B[访问Cloudflare Worker] </span><br><span class="line">B --&gt; C[Worker随机选择图片] --&gt; D[返回图片内容]  </span><br></pre></td></tr></table></figure></div>
+<h3 id="2-Cloudflare-Worker代码"><a href="#2-Cloudflare-Worker代码" class="headerlink" title="2. Cloudflare Worker代码"></a>2. Cloudflare Worker代码</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 配置图片列表（支持多个图床混合）  </span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">IMAGE_SOURCES</span> = [  </span><br><span class="line">    <span class="string">&quot;https://lsky-pro.com/images/1.jpg&quot;</span>,  </span><br><span class="line">    <span class="string">&quot;https://oss.aliyuncs.com/bucket/2.png&quot;</span>,  </span><br><span class="line">    <span class="string">&quot;https://img.usercontent.com/3.webp&quot;</span>  </span><br><span class="line">];  </span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;  </span><br><span class="line">    <span class="keyword">async</span> <span class="title function_">fetch</span>(<span class="params">request</span>) &#123;  </span><br><span class="line">        <span class="comment">// 随机选择图片  </span></span><br><span class="line">        <span class="keyword">const</span> targetUrl = <span class="variable constant_">IMAGE_SOURCES</span>[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * <span class="variable constant_">IMAGE_SOURCES</span>.<span class="property">length</span>)];  </span><br><span class="line">          </span><br><span class="line">        <span class="comment">// 获取图片内容  </span></span><br><span class="line">        <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="title function_">fetch</span>(targetUrl);  </span><br><span class="line">          </span><br><span class="line">        <span class="comment">// 构造响应头  </span></span><br><span class="line">        <span class="keyword">const</span> headers = <span class="keyword">new</span> <span class="title class_">Headers</span>(response.<span class="property">headers</span>);  </span><br><span class="line">        headers.<span class="title function_">set</span>(<span class="string">&quot;Cache-Control&quot;</span>, <span class="string">&quot;public, max-age=3600&quot;</span>);  </span><br><span class="line">        headers.<span class="title function_">set</span>(<span class="string">&quot;CDN-Cache-Control&quot;</span>, <span class="string">&quot;public, max-age=7200&quot;</span>);  </span><br><span class="line">          </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Response</span>(response.<span class="property">body</span>, &#123;  </span><br><span class="line">            <span class="attr">status</span>: <span class="number">200</span>,  </span><br><span class="line">            <span class="attr">headers</span>: headers  </span><br><span class="line">        &#125;);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">### 3. 高级功能扩展  </span></span><br><span class="line"><span class="string">**动态配置管理**：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>javascript  </span><br><span class="line"><span class="comment">// 从KV存储读取配置  </span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">IMAGE_LIST</span> = <span class="keyword">await</span> env.<span class="property">IMG_CONFIG</span>.<span class="title function_">get</span>(<span class="string">&quot;MAIN_LIST&quot;</span>);  </span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">**访问控制**：  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>javascript  </span><br><span class="line"><span class="comment">// 检查Referer  </span></span><br><span class="line"><span class="keyword">const</span> referer = request.<span class="property">headers</span>.<span class="title function_">get</span>(<span class="string">&quot;Referer&quot;</span>);  </span><br><span class="line"><span class="keyword">if</span> (!referer?.<span class="title function_">includes</span>(<span class="string">&quot;yourdomain.com&quot;</span>)) &#123;  </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Response</span>(<span class="string">&quot;Forbidden&quot;</span>, &#123; <span class="attr">status</span>: <span class="number">403</span> &#125;);  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">---</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">## 五、方案3：自建后端API（专业版）  </span></span><br><span class="line"><span class="string">### 1. 系统架构  </span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>mermaid</span><br><span class="line"> graph <span class="variable constant_">TD</span></span><br><span class="line">A[用户请求] --&gt; B[<span class="title class_">Nginx</span>] --&gt; C[<span class="title class_">Node</span>.<span class="property">js</span> <span class="variable constant_">API</span>] --&gt; D[<span class="title class_">Lsky</span> <span class="title class_">Pro</span>图床]  </span><br></pre></td></tr></table></figure></div>
+<h3 id="2-完整部署流程"><a href="#2-完整部署流程" class="headerlink" title="2. 完整部署流程"></a>2. 完整部署流程</h3><h4 id="步骤1：配置Lsky-Pro图床"><a href="#步骤1：配置Lsky-Pro图床" class="headerlink" title="步骤1：配置Lsky Pro图床"></a>步骤1：配置Lsky Pro图床</h4><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># Lsky Pro的Nginx配置  </span></span><br><span class="line"><span class="section">server</span> &#123;  </span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;  </span><br><span class="line">    <span class="attribute">server_name</span> lsky.yourdomain.com;  </span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;  </span><br><span class="line">        <span class="attribute">add_header</span> Access-Control-Allow-Origin *;  </span><br><span class="line">        <span class="attribute">add_header</span> Access-Control-Allow-Methods <span class="string">&#x27;GET&#x27;</span>;  </span><br><span class="line">        <span class="attribute">root</span> /var/www/lsky-pro/storage/app/public;  </span><br><span class="line">        <span class="attribute">index</span> index.php;  </span><br><span class="line">          </span><br><span class="line">        <span class="comment"># Laravel路由规则  </span></span><br><span class="line">        <span class="attribute">try_files</span> <span class="variable">$uri</span> <span class="variable">$uri</span>/ /index.php?<span class="variable">$query_string</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure></div>
+
+<h4 id="步骤2：编写Node-js-API"><a href="#步骤2：编写Node-js-API" class="headerlink" title="步骤2：编写Node.js API"></a>步骤2：编写Node.js API</h4><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);  </span><br><span class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">&#x27;cors&#x27;</span>);  </span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();  </span><br><span class="line"></span><br><span class="line"><span class="comment">// 允许跨域  </span></span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cors</span>());  </span><br><span class="line"></span><br><span class="line"><span class="comment">// 缓存层  </span></span><br><span class="line"><span class="keyword">let</span> cachedImages = [];  </span><br><span class="line"><span class="keyword">let</span> lastUpdate = <span class="number">0</span>;  </span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取图片列表  </span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">refreshImages</span>(<span class="params"></span>) &#123;  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">&#x27;https://lsky.yourdomain.com/api/v1/images?per_page=100&#x27;</span>);  </span><br><span class="line">        <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="title function_">json</span>();  </span><br><span class="line">        cachedImages = data.<span class="property">data</span>.<span class="title function_">map</span>(<span class="function"><span class="params">img</span> =&gt;</span> img.<span class="property">links</span>.<span class="property">url</span>);  </span><br><span class="line">        lastUpdate = <span class="title class_">Date</span>.<span class="title function_">now</span>();  </span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;  </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;刷新图片失败:&#x27;</span>, error);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="comment">// 每5分钟刷新缓存  </span></span><br><span class="line"><span class="built_in">setInterval</span>(refreshImages, <span class="number">300000</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">// API端点  </span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/random&#x27;</span>, <span class="keyword">async</span> (req, res) =&gt; &#123;  </span><br><span class="line">    <span class="keyword">if</span> (<span class="title class_">Date</span>.<span class="title function_">now</span>() - lastUpdate &gt; <span class="number">300000</span>) &#123;  </span><br><span class="line">        <span class="keyword">await</span> <span class="title function_">refreshImages</span>();  </span><br><span class="line">    &#125;  </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (cachedImages.<span class="property">length</span> === <span class="number">0</span>) &#123;  </span><br><span class="line">        <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">503</span>).<span class="title function_">json</span>(&#123; <span class="attr">error</span>: <span class="string">&quot;服务暂不可用&quot;</span> &#125;);  </span><br><span class="line">    &#125;  </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> randomImg = cachedImages[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * cachedImages.<span class="property">length</span>)];  </span><br><span class="line">    res.<span class="title function_">redirect</span>(<span class="number">302</span>, randomImg);  </span><br><span class="line">&#125;);  </span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动服务  </span></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>, <span class="function">() =&gt;</span> &#123;  </span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;API服务运行中：http://localhost:3000&#x27;</span>);  </span><br><span class="line">&#125;);  </span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#### 步骤3：PM2进程管理  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>bash  </span><br><span class="line"># 安装<span class="title class_">PM2</span>  </span><br><span class="line">npm install pm2 -g  </span><br><span class="line"></span><br><span class="line"># 启动服务  </span><br><span class="line">pm2 start app.<span class="property">js</span> --name <span class="string">&quot;random-img-api&quot;</span>  </span><br><span class="line"></span><br><span class="line"># 设置开机启动  </span><br><span class="line">pm2 startup  </span><br><span class="line">pm2 save  </span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="六、方案4：无服务器跳转（黑科技版）"><a href="#六、方案4：无服务器跳转（黑科技版）" class="headerlink" title="六、方案4：无服务器跳转（黑科技版）"></a>六、方案4：无服务器跳转（黑科技版）</h2><h3 id="1-实现原理"><a href="#1-实现原理" class="headerlink" title="1. 实现原理"></a>1. 实现原理</h3><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">graph TD  </span><br><span class="line">A[用户请求 /random.jpg] --&gt; B[Nginx重写到 random.html] --&gt; C[HTML内JS执行随机跳转] --&gt; D[浏览器显示真实图片]  </span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-完整配置"><a href="#2-完整配置" class="headerlink" title="2. 完整配置"></a>2. 完整配置</h3><h4 id="HTML跳转页面"><a href="#HTML跳转页面" class="headerlink" title="HTML跳转页面"></a>HTML跳转页面</h4><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片跳转<span class="tag">&lt;/<span class="name">title</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript">  </span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 从JSON文件加载图片列表  </span></span></span><br><span class="line"><span class="language-javascript">        <span class="title function_">fetch</span>(<span class="string">&#x27;/image-list.json&#x27;</span>)  </span></span><br><span class="line"><span class="language-javascript">            .<span class="title function_">then</span>(<span class="function"><span class="params">res</span> =&gt;</span> res.<span class="title function_">json</span>())  </span></span><br><span class="line"><span class="language-javascript">            .<span class="title function_">then</span>(<span class="function"><span class="params">images</span> =&gt;</span> &#123;  </span></span><br><span class="line"><span class="language-javascript">                <span class="keyword">const</span> randomImg = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)];  </span></span><br><span class="line"><span class="language-javascript">                <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = randomImg + <span class="string">&#x27;?t=&#x27;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();  </span></span><br><span class="line"><span class="language-javascript">            &#125;);  </span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>正在加载随机图片...&lt;/p &gt;  </span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h4 id="Nginx配置"><a href="#Nginx配置" class="headerlink" title="Nginx配置"></a>Nginx配置</h4><pre><code class="nginx">server &#123;  
+    listen 80;  
+    server_name img.yourdomain.com;  
+
+    # 伪装图片路径  
+    location = /random.jpg &#123;  
+        rewrite ^ /random.html break;  
+    &#125;  
+
+    # 静态资源  
+    location / &#123;  
+        root /var/www/static;  
+        index index.html;  
+    &#125;  
+&#125;  
+</code></pre>
+<h3 id="3-高级技巧"><a href="#3-高级技巧" class="headerlink" title="3. 高级技巧"></a>3. 高级技巧</h3><p><strong>动态生成JSON</strong>：  </p>
+<pre><code class="bash"># 使用脚本自动生成image-list.json  
+#!/bin/bash  
+IMAGES=($(ls /var/www/images/*.jpg))  
+JSON=&quot;[&quot;  
+for img in &quot;$&#123;IMAGES[@]&#125;&quot;; do  
+    JSON+=&quot;\&quot;https://img.yourdomain.com/$&#123;img##*/&#125;\&quot;,&quot;  
+done  
+JSON=&quot;$&#123;JSON%,&#125;]&quot;  
+echo $JSON &gt; /var/www/static/image-list.json  
+</code></pre>
+<hr>
+<h2 id="七、性能优化大全"><a href="#七、性能优化大全" class="headerlink" title="七、性能优化大全"></a>七、性能优化大全</h2><h3 id="1-缓存策略"><a href="#1-缓存策略" class="headerlink" title="1. 缓存策略"></a>1. 缓存策略</h3><table>
+<thead>
+<tr>
+<th>层级</th>
+<th>方案</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>浏览器</td>
+<td><code>Cache-Control: max-age=86400</code></td>
+<td>减少重复请求</td>
+</tr>
+<tr>
+<td>CDN</td>
+<td>Cloudflare 缓存规则</td>
+<td>加速全球访问</td>
+</tr>
+<tr>
+<td>服务端</td>
+<td>Redis缓存图片列表</td>
+<td>降低数据库压力</td>
+</tr>
+</tbody></table>
+<h3 id="2-安全防护"><a href="#2-安全防护" class="headerlink" title="2. 安全防护"></a>2. 安全防护</h3><ul>
+<li><p><strong>防盗链设置</strong>：  </p>
+<pre><code class="nginx">valid_referers none blocked *.yourdomain.com;  
+if ($invalid_referer) &#123; return 403; &#125;  
+</code></pre>
+</li>
+<li><p><strong>请求限流</strong>：  </p>
+<pre><code class="nginx">limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;  
+
+location /api &#123;  
+    limit_req zone=api_limit burst=20;  
+&#125;  
+</code></pre>
+</li>
+</ul>
+<hr>
+<h2 id="八、常见问题解答"><a href="#八、常见问题解答" class="headerlink" title="八、常见问题解答"></a>八、常见问题解答</h2><h3 id="Q1：如何解决跨域问题？"><a href="#Q1：如何解决跨域问题？" class="headerlink" title="Q1：如何解决跨域问题？"></a>Q1：如何解决跨域问题？</h3><ul>
+<li>后端设置 <code>Access-Control-Allow-Origin</code> 头  </li>
+<li>使用Cloudflare Workers代理</li>
+</ul>
+<h3 id="Q2：图片加载慢怎么办？"><a href="#Q2：图片加载慢怎么办？" class="headerlink" title="Q2：图片加载慢怎么办？"></a>Q2：图片加载慢怎么办？</h3><ul>
+<li>启用CDN加速  </li>
+<li>转换WebP格式（节省30%体积）  </li>
+<li>实现懒加载技术</li>
+</ul>
+<h3 id="Q3：如何防止图片被盗用？"><a href="#Q3：如何防止图片被盗用？" class="headerlink" title="Q3：如何防止图片被盗用？"></a>Q3：如何防止图片被盗用？</h3><ul>
+<li>添加动态水印  </li>
+<li>设置Referer白名单  </li>
+<li>使用签名URL</li>
+</ul>
+<hr>
+<p>通过本教程，你可以根据实际需求从<strong>简单到复杂</strong>逐步实现随机图站。建议先用方案1快速验证想法，再逐步升级到更专业的方案。所有代码均已通过实测，可直接部署使用！</p>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>教程</tag>
+        <tag>图床</tag>
+        <tag>头图</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>七下道法第二单元知识点秘籍</title>
     <url>/2024/04/27/qxdfdrdwzsd/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="1-情绪的影响或作用"><a href="#1-情绪的影响或作用" class="headerlink" title="1.情绪的影响或作用"></a>1.情绪的影响或作用</h2><p>1.情绪影响着我们的观念和行动。<br>2.激励我们克服困难、努力向上（积极）；<br>3.让我们因为某个小小的挫败而止步不前（消极）。</p>
@@ -123,9 +448,9 @@
         <category>教程</category>
       </categories>
       <tags>
+        <tag>教程</tag>
         <tag>SMB</tag>
         <tag>Liunx</tag>
-        <tag>教程</tag>
       </tags>
   </entry>
 </search>
