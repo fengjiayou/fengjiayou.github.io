@@ -1,123 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>4 种技术方案打造随机图片站：从入门到进阶</title>
-    <url>/2025/03/09/Random-plots/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>无论你是想搭建 <strong>壁纸站</strong>、<strong>趣味图库</strong>，还是为博客增加 <strong>随机头图</strong> 功能，本教程提供 <strong>4 种技术方案</strong>，涵盖：</p>
-<p>✅ 纯前端静态方案（适合新手）<br>✅ 云函数代理方案（适合中小型项目）<br>✅ 自建后端 API 方案（适合企业级应用）<br>✅ 无服务器跳转方案（适合极客玩家）  </p>
-<hr>
-<h2 id="1-方案对比：如何选择最适合你的技术路线？"><a href="#1-方案对比：如何选择最适合你的技术路线？" class="headerlink" title="1. 方案对比：如何选择最适合你的技术路线？"></a><strong>1. 方案对比：如何选择最适合你的技术路线？</strong></h2><table>
-<thead>
-<tr>
-<th>方案</th>
-<th>所需技能</th>
-<th>成本</th>
-<th>适合人群</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="#2-%E7%BA%AF%E5%89%8D%E7%AB%AF%E6%96%B9%E6%A1%88-%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA">纯前端方案</a></td>
-<td>HTML &#x2F; JS</td>
-<td>免费</td>
-<td>个人博客 &#x2F; 新手</td>
-</tr>
-<tr>
-<td><a href="#3-%E4%BA%91%E5%87%BD%E6%95%B0%E4%BB%A3%E7%90%86%E6%96%B9%E6%A1%88-cloudflare-worker">云函数代理</a></td>
-<td>云服务 &#x2F; JS</td>
-<td>低</td>
-<td>中小型项目</td>
-</tr>
-<tr>
-<td><a href="#4-%E8%87%AA%E5%BB%BA%E5%90%8E%E7%AB%AF-api-%E4%B8%93%E4%B8%9A%E7%89%88">自建后端 API</a></td>
-<td>Node.js + 运维</td>
-<td>中</td>
-<td>企业 &#x2F; 技术团队</td>
-</tr>
-<tr>
-<td><a href="#5-%E6%97%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B7%B3%E8%BD%AC-%E6%9E%81%E5%AE%A2%E7%8E%A9%E6%B3%95">无服务器跳转</a></td>
-<td>Nginx 配置</td>
-<td>免费</td>
-<td>极客 &#x2F; SEO 不敏感场景</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="2-纯前端方案：快速搭建"><a href="#2-纯前端方案：快速搭建" class="headerlink" title="2. 纯前端方案：快速搭建"></a><strong>2. 纯前端方案：快速搭建</strong></h2><h3 id="2-1-核心代码（适用于-GitHub-Pages-Vercel）"><a href="#2-1-核心代码（适用于-GitHub-Pages-Vercel）" class="headerlink" title="2.1 核心代码（适用于 GitHub Pages &#x2F; Vercel）"></a><strong>2.1 核心代码</strong>（适用于 GitHub Pages &#x2F; Vercel）</h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片站<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;description&quot;</span> <span class="attr">content</span>=<span class="string">&quot;一个轻量级的随机壁纸网站，每次刷新都不同！&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;keywords&quot;</span> <span class="attr">content</span>=<span class="string">&quot;壁纸, 随机图片, 图片 API, 免费图片资源&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">img</span> &#123; <span class="attribute">max-width</span>: <span class="number">100%</span>; <span class="attribute">border-radius</span>: <span class="number">10px</span>; <span class="attribute">box-shadow</span>: <span class="number">0</span> <span class="number">4px</span> <span class="number">12px</span> <span class="built_in">rgba</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0.15</span>); &#125;</span></span><br><span class="line"><span class="language-css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">id</span>=<span class="string">&quot;randomImg&quot;</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;随机图片&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">const</span> images = [</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?nature&quot;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?city&quot;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?animal&quot;</span></span></span><br><span class="line"><span class="language-javascript">        ];</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">function</span> <span class="title function_">loadImage</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="keyword">const</span> imgElement = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;randomImg&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">            imgElement.<span class="property">src</span> = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)] + <span class="string">&quot;&amp;t=&quot;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">        </span></span><br><span class="line"><span class="language-javascript">        <span class="title function_">loadImage</span>();</span></span><br><span class="line"><span class="language-javascript">        <span class="built_in">setInterval</span>(loadImage, <span class="number">10000</span>);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="2-2-部署步骤"><a href="#2-2-部署步骤" class="headerlink" title="2.2 部署步骤"></a><strong>2.2 部署步骤</strong></h3><ol>
-<li>保存为 <code>index.html</code></li>
-<li>上传至 GitHub 仓库</li>
-<li>开启 GitHub Pages 服务</li>
-</ol>
-<h3 id="2-3-方案特点"><a href="#2-3-方案特点" class="headerlink" title="2.3 方案特点"></a><strong>2.3 方案特点</strong></h3><table>
-<thead>
-<tr>
-<th>优点</th>
-<th>缺点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>5 分钟快速上线</td>
-<td>需手动维护图片列表</td>
-</tr>
-<tr>
-<td>完全免费</td>
-<td>URL 暴露，容易被采集</td>
-</tr>
-<tr>
-<td>无服务器依赖</td>
-<td>无法动态扩展</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="3-云函数代理方案（Cloudflare-Worker）"><a href="#3-云函数代理方案（Cloudflare-Worker）" class="headerlink" title="3. 云函数代理方案（Cloudflare Worker）"></a><strong>3. 云函数代理方案（Cloudflare Worker）</strong></h2><h3 id="3-1-架构"><a href="#3-1-架构" class="headerlink" title="3.1 架构"></a><strong>3.1 架构</strong></h3><pre class="mermaid">graph TD;
-A[用户] --> B[访问 Cloudflare Worker] --> C[Worker 随机选择图片] --> D[返回图片内容]</pre>
-<h3 id="3-2-Cloudflare-Worker-代码"><a href="#3-2-Cloudflare-Worker-代码" class="headerlink" title="3.2 Cloudflare Worker 代码"></a><strong>3.2 Cloudflare Worker 代码</strong></h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">IMAGE_SOURCES</span> = [</span><br><span class="line">    <span class="string">&quot;https://lsky-pro.com/images/1.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://oss.aliyuncs.com/bucket/2.png&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://img.usercontent.com/3.webp&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="title function_">fetch</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> targetUrl = <span class="variable constant_">IMAGE_SOURCES</span>[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * <span class="variable constant_">IMAGE_SOURCES</span>.<span class="property">length</span>)];</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">fetch</span>(targetUrl, &#123; <span class="attr">headers</span>: &#123; <span class="string">&quot;Cache-Control&quot;</span>: <span class="string">&quot;public, max-age=7200&quot;</span> &#125; &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h2 id="4-自建后端-API（专业版）"><a href="#4-自建后端-API（专业版）" class="headerlink" title="4. 自建后端 API（专业版）"></a><strong>4. 自建后端 API（专业版）</strong></h2><h3 id="4-1-系统架构"><a href="#4-1-系统架构" class="headerlink" title="4.1 系统架构"></a><strong>4.1 系统架构</strong></h3><pre class="mermaid">graph TD;
-A[用户请求] --> B[Nginx] --> C[Node.js API] --> D[Lsky Pro 图床]</pre>
-<h3 id="4-2-Node-js-API-代码"><a href="#4-2-Node-js-API-代码" class="headerlink" title="4.2 Node.js API 代码"></a><strong>4.2 Node.js API 代码</strong></h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">&#x27;cors&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cors</span>());</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> cachedImages = [];</span><br><span class="line"><span class="keyword">let</span> lastUpdate = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">refreshImages</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">&#x27;https://lsky.yourdomain.com/api/v1/images?per_page=100&#x27;</span>);</span><br><span class="line">        <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="title function_">json</span>();</span><br><span class="line">        cachedImages = data.<span class="property">data</span>.<span class="title function_">map</span>(<span class="function"><span class="params">img</span> =&gt;</span> img.<span class="property">links</span>.<span class="property">url</span>);</span><br><span class="line">        lastUpdate = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;刷新图片失败:&#x27;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setInterval</span>(refreshImages, <span class="number">300000</span>);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/random&#x27;</span>, <span class="keyword">async</span> (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title class_">Date</span>.<span class="title function_">now</span>() - lastUpdate &gt; <span class="number">300000</span>) &#123; <span class="keyword">await</span> <span class="title function_">refreshImages</span>(); &#125;</span><br><span class="line">    <span class="keyword">if</span> (cachedImages.<span class="property">length</span> === <span class="number">0</span>) &#123; <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">503</span>).<span class="title function_">json</span>(&#123; <span class="attr">error</span>: <span class="string">&quot;服务暂不可用&quot;</span> &#125;); &#125;</span><br><span class="line">    res.<span class="title function_">redirect</span>(<span class="number">302</span>, cachedImages[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * cachedImages.<span class="property">length</span>)]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>, <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;API 运行于 http://localhost:3000&#x27;</span>));</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h2 id="5-无服务器跳转（极客玩法）"><a href="#5-无服务器跳转（极客玩法）" class="headerlink" title="5. 无服务器跳转（极客玩法）"></a><strong>5. 无服务器跳转（极客玩法）</strong></h2><h3 id="5-1-Nginx-伪装跳转"><a href="#5-1-Nginx-伪装跳转" class="headerlink" title="5.1 Nginx 伪装跳转"></a><strong>5.1 Nginx 伪装跳转</strong></h3><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> img.yourdomain.com;</span><br><span class="line">    <span class="section">location</span> = /random.jpg &#123; <span class="attribute">rewrite</span><span class="regexp"> ^</span> /random.html <span class="literal">break</span>; &#125;</span><br><span class="line">    <span class="section">location</span> / &#123; <span class="attribute">root</span> /var/www/static; <span class="attribute">index</span> index.html; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<h3 id="5-2-HTML-页面自动跳转"><a href="#5-2-HTML-页面自动跳转" class="headerlink" title="5.2 HTML 页面自动跳转"></a><strong>5.2 HTML 页面自动跳转</strong></h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片跳转<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="title function_">fetch</span>(<span class="string">&#x27;/image-list.json&#x27;</span>).<span class="title function_">then</span>(<span class="function"><span class="params">res</span> =&gt;</span> res.<span class="title function_">json</span>()).<span class="title function_">then</span>(<span class="function"><span class="params">images</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)] + <span class="string">&#x27;?t=&#x27;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();</span></span><br><span class="line"><span class="language-javascript">    &#125;);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>正在加载随机图片...<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h2 id="6-终极优化：速度与安全"><a href="#6-终极优化：速度与安全" class="headerlink" title="6. 终极优化：速度与安全"></a><strong>6. 终极优化：速度与安全</strong></h2><h3 id="6-1-缓存策略"><a href="#6-1-缓存策略" class="headerlink" title="6.1 缓存策略"></a><strong>6.1 缓存策略</strong></h3><table>
-<thead>
-<tr>
-<th>层级</th>
-<th>方案</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>浏览器</td>
-<td><code>Cache-Control: max-age=86400</code></td>
-</tr>
-<tr>
-<td>CDN</td>
-<td>Cloudflare 缓存规则</td>
-</tr>
-<tr>
-<td>服务端</td>
-<td>Redis 缓存图片列表</td>
-</tr>
-</tbody></table>
-<h3 id="6-2-防盗链设置"><a href="#6-2-防盗链设置" class="headerlink" title="6.2 防盗链设置"></a><strong>6.2 防盗链设置</strong></h3><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">valid_referers</span> <span class="literal">none</span> <span class="literal">blocked</span> <span class="regexp">*.yourdomain.com</span>;</span><br><span class="line"><span class="attribute">if</span> (<span class="variable">$invalid_referer</span>) &#123; <span class="attribute">return</span> <span class="number">403</span>; &#125;</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<p>本教程提供从 <strong>0 到 1</strong> 的完整方案，适用于不同技术水平的开发者，赶快试试吧！🚀</p>
-]]></content>
-      <categories>
-        <category>教程</category>
-      </categories>
-      <tags>
-        <tag>图床</tag>
-        <tag>头图</tag>
-        <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Squid 代理服务器部署与优化指南</title>
     <url>/2025/03/23/Squid-Prox-Serve-Deploymen-Optimizatio-Guid/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="一、核心网络配置"><a href="#一、核心网络配置" class="headerlink" title="一、核心网络配置"></a><strong>一、核心网络配置</strong></h3><p><strong>配置文件位置</strong>：<code>/etc/squid/squid.conf</code> 文件起始部分  </p>
@@ -243,10 +126,150 @@ A[用户请求] --> B[Nginx] --> C[Node.js API] --> D[Lsky Pro 图床]</pre>
         <category>教程</category>
       </categories>
       <tags>
-        <tag>教程</tag>
         <tag>代理</tag>
         <tag>squid</tag>
         <tag>Liunx</tag>
+        <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4 种技术方案打造随机图片站：从入门到进阶</title>
+    <url>/2025/03/09/Random-plots/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>无论你是想搭建 <strong>壁纸站</strong>、<strong>趣味图库</strong>，还是为博客增加 <strong>随机头图</strong> 功能，本教程提供 <strong>4 种技术方案</strong>，涵盖：</p>
+<p>✅ 纯前端静态方案（适合新手）<br>✅ 云函数代理方案（适合中小型项目）<br>✅ 自建后端 API 方案（适合企业级应用）<br>✅ 无服务器跳转方案（适合极客玩家）  </p>
+<hr>
+<h2 id="1-方案对比：如何选择最适合你的技术路线？"><a href="#1-方案对比：如何选择最适合你的技术路线？" class="headerlink" title="1. 方案对比：如何选择最适合你的技术路线？"></a><strong>1. 方案对比：如何选择最适合你的技术路线？</strong></h2><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>所需技能</th>
+<th>成本</th>
+<th>适合人群</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="#2-%E7%BA%AF%E5%89%8D%E7%AB%AF%E6%96%B9%E6%A1%88-%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA">纯前端方案</a></td>
+<td>HTML &#x2F; JS</td>
+<td>免费</td>
+<td>个人博客 &#x2F; 新手</td>
+</tr>
+<tr>
+<td><a href="#3-%E4%BA%91%E5%87%BD%E6%95%B0%E4%BB%A3%E7%90%86%E6%96%B9%E6%A1%88-cloudflare-worker">云函数代理</a></td>
+<td>云服务 &#x2F; JS</td>
+<td>低</td>
+<td>中小型项目</td>
+</tr>
+<tr>
+<td><a href="#4-%E8%87%AA%E5%BB%BA%E5%90%8E%E7%AB%AF-api-%E4%B8%93%E4%B8%9A%E7%89%88">自建后端 API</a></td>
+<td>Node.js + 运维</td>
+<td>中</td>
+<td>企业 &#x2F; 技术团队</td>
+</tr>
+<tr>
+<td><a href="#5-%E6%97%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B7%B3%E8%BD%AC-%E6%9E%81%E5%AE%A2%E7%8E%A9%E6%B3%95">无服务器跳转</a></td>
+<td>Nginx 配置</td>
+<td>免费</td>
+<td>极客 &#x2F; SEO 不敏感场景</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-纯前端方案：快速搭建"><a href="#2-纯前端方案：快速搭建" class="headerlink" title="2. 纯前端方案：快速搭建"></a><strong>2. 纯前端方案：快速搭建</strong></h2><h3 id="2-1-核心代码（适用于-GitHub-Pages-Vercel）"><a href="#2-1-核心代码（适用于-GitHub-Pages-Vercel）" class="headerlink" title="2.1 核心代码（适用于 GitHub Pages &#x2F; Vercel）"></a><strong>2.1 核心代码</strong>（适用于 GitHub Pages &#x2F; Vercel）</h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片站<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;description&quot;</span> <span class="attr">content</span>=<span class="string">&quot;一个轻量级的随机壁纸网站，每次刷新都不同！&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;keywords&quot;</span> <span class="attr">content</span>=<span class="string">&quot;壁纸, 随机图片, 图片 API, 免费图片资源&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">img</span> &#123; <span class="attribute">max-width</span>: <span class="number">100%</span>; <span class="attribute">border-radius</span>: <span class="number">10px</span>; <span class="attribute">box-shadow</span>: <span class="number">0</span> <span class="number">4px</span> <span class="number">12px</span> <span class="built_in">rgba</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0.15</span>); &#125;</span></span><br><span class="line"><span class="language-css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">id</span>=<span class="string">&quot;randomImg&quot;</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;随机图片&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">const</span> images = [</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?nature&quot;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?city&quot;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?animal&quot;</span></span></span><br><span class="line"><span class="language-javascript">        ];</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">function</span> <span class="title function_">loadImage</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="keyword">const</span> imgElement = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;randomImg&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">            imgElement.<span class="property">src</span> = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)] + <span class="string">&quot;&amp;t=&quot;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">        </span></span><br><span class="line"><span class="language-javascript">        <span class="title function_">loadImage</span>();</span></span><br><span class="line"><span class="language-javascript">        <span class="built_in">setInterval</span>(loadImage, <span class="number">10000</span>);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-2-部署步骤"><a href="#2-2-部署步骤" class="headerlink" title="2.2 部署步骤"></a><strong>2.2 部署步骤</strong></h3><ol>
+<li>保存为 <code>index.html</code></li>
+<li>上传至 GitHub 仓库</li>
+<li>开启 GitHub Pages 服务</li>
+</ol>
+<h3 id="2-3-方案特点"><a href="#2-3-方案特点" class="headerlink" title="2.3 方案特点"></a><strong>2.3 方案特点</strong></h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5 分钟快速上线</td>
+<td>需手动维护图片列表</td>
+</tr>
+<tr>
+<td>完全免费</td>
+<td>URL 暴露，容易被采集</td>
+</tr>
+<tr>
+<td>无服务器依赖</td>
+<td>无法动态扩展</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3-云函数代理方案（Cloudflare-Worker）"><a href="#3-云函数代理方案（Cloudflare-Worker）" class="headerlink" title="3. 云函数代理方案（Cloudflare Worker）"></a><strong>3. 云函数代理方案（Cloudflare Worker）</strong></h2><h3 id="3-1-架构"><a href="#3-1-架构" class="headerlink" title="3.1 架构"></a><strong>3.1 架构</strong></h3><pre class="mermaid">graph TD;
+A[用户] --> B[访问 Cloudflare Worker] --> C[Worker 随机选择图片] --> D[返回图片内容]</pre>
+<h3 id="3-2-Cloudflare-Worker-代码"><a href="#3-2-Cloudflare-Worker-代码" class="headerlink" title="3.2 Cloudflare Worker 代码"></a><strong>3.2 Cloudflare Worker 代码</strong></h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">IMAGE_SOURCES</span> = [</span><br><span class="line">    <span class="string">&quot;https://lsky-pro.com/images/1.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://oss.aliyuncs.com/bucket/2.png&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://img.usercontent.com/3.webp&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="title function_">fetch</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> targetUrl = <span class="variable constant_">IMAGE_SOURCES</span>[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * <span class="variable constant_">IMAGE_SOURCES</span>.<span class="property">length</span>)];</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">fetch</span>(targetUrl, &#123; <span class="attr">headers</span>: &#123; <span class="string">&quot;Cache-Control&quot;</span>: <span class="string">&quot;public, max-age=7200&quot;</span> &#125; &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="4-自建后端-API（专业版）"><a href="#4-自建后端-API（专业版）" class="headerlink" title="4. 自建后端 API（专业版）"></a><strong>4. 自建后端 API（专业版）</strong></h2><h3 id="4-1-系统架构"><a href="#4-1-系统架构" class="headerlink" title="4.1 系统架构"></a><strong>4.1 系统架构</strong></h3><pre class="mermaid">graph TD;
+A[用户请求] --> B[Nginx] --> C[Node.js API] --> D[Lsky Pro 图床]</pre>
+<h3 id="4-2-Node-js-API-代码"><a href="#4-2-Node-js-API-代码" class="headerlink" title="4.2 Node.js API 代码"></a><strong>4.2 Node.js API 代码</strong></h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">&#x27;cors&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cors</span>());</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> cachedImages = [];</span><br><span class="line"><span class="keyword">let</span> lastUpdate = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">refreshImages</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">&#x27;https://lsky.yourdomain.com/api/v1/images?per_page=100&#x27;</span>);</span><br><span class="line">        <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="title function_">json</span>();</span><br><span class="line">        cachedImages = data.<span class="property">data</span>.<span class="title function_">map</span>(<span class="function"><span class="params">img</span> =&gt;</span> img.<span class="property">links</span>.<span class="property">url</span>);</span><br><span class="line">        lastUpdate = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;刷新图片失败:&#x27;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setInterval</span>(refreshImages, <span class="number">300000</span>);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/random&#x27;</span>, <span class="keyword">async</span> (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title class_">Date</span>.<span class="title function_">now</span>() - lastUpdate &gt; <span class="number">300000</span>) &#123; <span class="keyword">await</span> <span class="title function_">refreshImages</span>(); &#125;</span><br><span class="line">    <span class="keyword">if</span> (cachedImages.<span class="property">length</span> === <span class="number">0</span>) &#123; <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">503</span>).<span class="title function_">json</span>(&#123; <span class="attr">error</span>: <span class="string">&quot;服务暂不可用&quot;</span> &#125;); &#125;</span><br><span class="line">    res.<span class="title function_">redirect</span>(<span class="number">302</span>, cachedImages[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * cachedImages.<span class="property">length</span>)]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>, <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;API 运行于 http://localhost:3000&#x27;</span>));</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="5-无服务器跳转（极客玩法）"><a href="#5-无服务器跳转（极客玩法）" class="headerlink" title="5. 无服务器跳转（极客玩法）"></a><strong>5. 无服务器跳转（极客玩法）</strong></h2><h3 id="5-1-Nginx-伪装跳转"><a href="#5-1-Nginx-伪装跳转" class="headerlink" title="5.1 Nginx 伪装跳转"></a><strong>5.1 Nginx 伪装跳转</strong></h3><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> img.yourdomain.com;</span><br><span class="line">    <span class="section">location</span> = /random.jpg &#123; <span class="attribute">rewrite</span><span class="regexp"> ^</span> /random.html <span class="literal">break</span>; &#125;</span><br><span class="line">    <span class="section">location</span> / &#123; <span class="attribute">root</span> /var/www/static; <span class="attribute">index</span> index.html; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h3 id="5-2-HTML-页面自动跳转"><a href="#5-2-HTML-页面自动跳转" class="headerlink" title="5.2 HTML 页面自动跳转"></a><strong>5.2 HTML 页面自动跳转</strong></h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片跳转<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="title function_">fetch</span>(<span class="string">&#x27;/image-list.json&#x27;</span>).<span class="title function_">then</span>(<span class="function"><span class="params">res</span> =&gt;</span> res.<span class="title function_">json</span>()).<span class="title function_">then</span>(<span class="function"><span class="params">images</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)] + <span class="string">&#x27;?t=&#x27;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();</span></span><br><span class="line"><span class="language-javascript">    &#125;);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>正在加载随机图片...<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="6-终极优化：速度与安全"><a href="#6-终极优化：速度与安全" class="headerlink" title="6. 终极优化：速度与安全"></a><strong>6. 终极优化：速度与安全</strong></h2><h3 id="6-1-缓存策略"><a href="#6-1-缓存策略" class="headerlink" title="6.1 缓存策略"></a><strong>6.1 缓存策略</strong></h3><table>
+<thead>
+<tr>
+<th>层级</th>
+<th>方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>浏览器</td>
+<td><code>Cache-Control: max-age=86400</code></td>
+</tr>
+<tr>
+<td>CDN</td>
+<td>Cloudflare 缓存规则</td>
+</tr>
+<tr>
+<td>服务端</td>
+<td>Redis 缓存图片列表</td>
+</tr>
+</tbody></table>
+<h3 id="6-2-防盗链设置"><a href="#6-2-防盗链设置" class="headerlink" title="6.2 防盗链设置"></a><strong>6.2 防盗链设置</strong></h3><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">valid_referers</span> <span class="literal">none</span> <span class="literal">blocked</span> <span class="regexp">*.yourdomain.com</span>;</span><br><span class="line"><span class="attribute">if</span> (<span class="variable">$invalid_referer</span>) &#123; <span class="attribute">return</span> <span class="number">403</span>; &#125;</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<p>本教程提供从 <strong>0 到 1</strong> 的完整方案，适用于不同技术水平的开发者，赶快试试吧！🚀</p>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>教程</tag>
+        <tag>图床</tag>
+        <tag>头图</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>虚拟机vmware17密钥 vmware workstation17许可证密钥</title>
+    <url>/2023/04/18/VM17jhmy/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="vmware-workstation-17-pro激活密钥，通用批量永久激活许可"><a href="#vmware-workstation-17-pro激活密钥，通用批量永久激活许可" class="headerlink" title="vmware workstation 17 pro激活密钥，通用批量永久激活许可"></a>vmware workstation 17 pro激活密钥，通用批量永久激活许可</h2><p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
+<p><code>ZF3R0-FHED2-M80TY-8QYGC-NPKYF</code></p>
+<p><code>FC7D0-D1YDL-M8DXZ-CYPZE-P2AY6</code></p>
+<p><code>ZC3TK-63GE6-481JY-WWW5T-Z7ATA</code></p>
+<p><code>1Z0G9-67285-FZG78-ZL3Q2-234JG</code></p>
+<h2 id="vmware-workstation-17-pro密匙最新"><a href="#vmware-workstation-17-pro密匙最新" class="headerlink" title="vmware workstation 17 pro密匙最新"></a>vmware workstation 17 pro密匙最新</h2><p><code>4A4RR-813DK-M81A9-4U35H-06KND</code></p>
+<p><code>NZ4RR-FTK5H-H81C1-Q30QH-1V2LA</code></p>
+<p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
+<p><code>4Y09U-AJK97-089Z0-A3054-83KLA</code></p>
+<p><code>4C21U-2KK9Q-M8130-4V2QH-CF810</code></p>
+<p><code>MC60H-DWHD5-H80U9-6V85M-8280D</code></p>
+]]></content>
+      <categories>
+        <category>资源分享</category>
+      </categories>
+      <tags>
+        <tag>许可证密钥</tag>
+        <tag>VM虚拟机</tag>
       </tags>
   </entry>
   <entry>
@@ -429,29 +452,6 @@ B -->|否| D[结束]</pre>
       </tags>
   </entry>
   <entry>
-    <title>虚拟机vmware17密钥 vmware workstation17许可证密钥</title>
-    <url>/2023/04/18/VM17jhmy/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="vmware-workstation-17-pro激活密钥，通用批量永久激活许可"><a href="#vmware-workstation-17-pro激活密钥，通用批量永久激活许可" class="headerlink" title="vmware workstation 17 pro激活密钥，通用批量永久激活许可"></a>vmware workstation 17 pro激活密钥，通用批量永久激活许可</h2><p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
-<p><code>ZF3R0-FHED2-M80TY-8QYGC-NPKYF</code></p>
-<p><code>FC7D0-D1YDL-M8DXZ-CYPZE-P2AY6</code></p>
-<p><code>ZC3TK-63GE6-481JY-WWW5T-Z7ATA</code></p>
-<p><code>1Z0G9-67285-FZG78-ZL3Q2-234JG</code></p>
-<h2 id="vmware-workstation-17-pro密匙最新"><a href="#vmware-workstation-17-pro密匙最新" class="headerlink" title="vmware workstation 17 pro密匙最新"></a>vmware workstation 17 pro密匙最新</h2><p><code>4A4RR-813DK-M81A9-4U35H-06KND</code></p>
-<p><code>NZ4RR-FTK5H-H81C1-Q30QH-1V2LA</code></p>
-<p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
-<p><code>4Y09U-AJK97-089Z0-A3054-83KLA</code></p>
-<p><code>4C21U-2KK9Q-M8130-4V2QH-CF810</code></p>
-<p><code>MC60H-DWHD5-H80U9-6V85M-8280D</code></p>
-]]></content>
-      <categories>
-        <category>资源分享</category>
-      </categories>
-      <tags>
-        <tag>许可证密钥</tag>
-        <tag>VM虚拟机</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>在Linux上安装和启用SMB（使用Samba）</title>
     <url>/2025/03/06/use-smb-in-linux-with-samba/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="1-安装Samba软件包"><a href="#1-安装Samba软件包" class="headerlink" title="1.安装Samba软件包"></a>1.安装Samba软件包</h2><p><code>Samba</code> 是一个实现 <code>SMB</code> 协议的开源软件包，它允许 <code>Linux</code> 系统与 <code>Windows</code> 系统或其他 <code>Linux</code> 系统共享文件。首先，我们需要安装 <code>Samba</code>。</p>
@@ -526,8 +526,8 @@ B -->|否| D[结束]</pre>
         <category>教程</category>
       </categories>
       <tags>
-        <tag>教程</tag>
         <tag>Liunx</tag>
+        <tag>教程</tag>
         <tag>SMB</tag>
       </tags>
   </entry>
