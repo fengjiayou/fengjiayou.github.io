@@ -1,6 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Shadowsocks 技术全解：原理、加密与抗封锁机制详解</title>
+    <url>/2025/05/25/Complete-Explanation-of-Shadowsocks-Technology/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>在现代网络审查愈加严格的背景下，<strong>Shadowsocks（SS）</strong> 作为一种轻量级、灵活、易部署的加密代理协议，依然被广泛用于科学上网、保护网络隐私及穿越地域限制。</p>
+<p>本篇文章将从技术视角，全面剖析 Shadowsocks 的<strong>工作原理、加密机制</strong>及其<strong>抗封锁策略</strong>，并对其与其他代理方案做技术对比，助你深入理解其设计哲学与适用场景。</p>
+<hr>
+<h2 id="一、Shadowsocks-是什么？"><a href="#一、Shadowsocks-是什么？" class="headerlink" title="一、Shadowsocks 是什么？"></a>一、Shadowsocks 是什么？</h2><p>Shadowsocks 是一种基于 <strong>SOCKS5</strong> 协议封装的代理工具，其本质是一个<strong>端到端的加密代理协议</strong>，通过客户端与服务端协同工作，将用户请求安全地中转出境或绕过受限网络。</p>
+<h3 id="架构简述："><a href="#架构简述：" class="headerlink" title="架构简述："></a>架构简述：</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="code"><pre><span class="line">[User App] → [SS Client (本地)] → 加密数据 → [SS Server (远端)] → [目标网站]</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li><strong>SS 客户端</strong>：本地提供 SOCKS5 接口，接收浏览器&#x2F;应用请求并加密。</li>
+<li><strong>SS 服务端</strong>：解密请求并代为访问目标网站，再将响应加密返回。</li>
+<li>整个通信链路是端到端加密的，只有本地与远端明文可见。</li>
+</ul>
+<hr>
+<h2 id="二、通信流程与协议设计"><a href="#二、通信流程与协议设计" class="headerlink" title="二、通信流程与协议设计"></a>二、通信流程与协议设计</h2><p>虽然 Shadowsocks 表面上支持 SOCKS5，<strong>但其与服务端之间通信是自定义协议</strong>，非标准 SOCKS5 转发。</p>
+<p>简化数据流如下：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="code"><pre><span class="line">1. 用户请求 → 本地 SS 客户端 → 转为 SS 协议数据包</span><br><span class="line">2. 客户端加密数据包（含目标地址 + 数据）</span><br><span class="line">3. 通过 TCP 或 UDP 发往服务端</span><br><span class="line">4. 服务端解密后访问目标网站，返回结果并加密</span><br><span class="line">5. 客户端解密并呈现结果</span><br></pre></td></tr></table></figure></div>
+
+<p>关键在于，<strong>请求地址本身也被加密</strong>，防止泄露请求意图，整个流程对中间人而言几乎完全不可见。</p>
+<hr>
+<h2 id="三、加密机制详解"><a href="#三、加密机制详解" class="headerlink" title="三、加密机制详解"></a>三、加密机制详解</h2><h3 id="3-1-对称加密基础"><a href="#3-1-对称加密基础" class="headerlink" title="3.1 对称加密基础"></a>3.1 对称加密基础</h3><p>Shadowsocks 使用对称加密，即客户端与服务端共享一个密码（<code>password</code>）和加密算法（<code>method</code>），所有加密解密均基于这一共享信息。</p>
+<hr>
+<h3 id="3-2-加密算法发展历程"><a href="#3-2-加密算法发展历程" class="headerlink" title="3.2 加密算法发展历程"></a>3.2 加密算法发展历程</h3><p>Shadowsocks 的加密方式大致经历了以下两个阶段：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>算法类别</th>
+<th>状态</th>
+<th>特征说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>初代</td>
+<td>Stream Cipher（流加密）</td>
+<td>已弃用 ❌</td>
+<td>只加密无认证，存在安全隐患</td>
+</tr>
+<tr>
+<td>现代推荐</td>
+<td>AEAD（带认证的加密）</td>
+<td>推荐 ✅</td>
+<td>加密+完整性校验，防中间人攻击</td>
+</tr>
+</tbody></table>
+<h4 id="流加密（已废弃）"><a href="#流加密（已废弃）" class="headerlink" title="流加密（已废弃）"></a>流加密（已废弃）</h4><p>如 <code>aes-256-cfb</code>、<code>chacha20</code>、<code>rc4-md5</code> 等采用传统流加密技术。问题在于：</p>
+<ul>
+<li>缺少认证，无法验证完整性；</li>
+<li>容易被重放攻击和伪造攻击利用；</li>
+<li>不再推荐在任何新部署中使用。</li>
+</ul>
+<hr>
+<h4 id="AEAD-模式（现代标准）"><a href="#AEAD-模式（现代标准）" class="headerlink" title="AEAD 模式（现代标准）"></a>AEAD 模式（现代标准）</h4><p>AEAD 是 Authenticated Encryption with Associated Data 的缩写，它集成了：</p>
+<ul>
+<li><strong>机密性（confidentiality）</strong>：防止数据被窃取；</li>
+<li><strong>完整性（integrity）</strong>：防止数据被修改；</li>
+<li><strong>重放防护</strong>：每次连接使用随机 nonce 保证加密唯一性。</li>
+</ul>
+<p>常用 AEAD 算法：</p>
+<ul>
+<li><code>aes-128-gcm</code></li>
+<li><code>aes-256-gcm</code></li>
+<li><code>chacha20-ietf-poly1305</code>（性能优，适用于移动设备）</li>
+</ul>
+<h4 id="加密数据结构（简略）："><a href="#加密数据结构（简略）：" class="headerlink" title="加密数据结构（简略）："></a>加密数据结构（简略）：</h4><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="code"><pre><span class="line">[Nonce][Encrypted Payload][Authentication Tag]</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>Nonce 每个会话随机生成，防止密文重复；</li>
+<li>Payload 包括目标地址、端口和应用数据；</li>
+<li>Tag 验证数据完整性。</li>
+</ul>
+<p>这使 Shadowsocks 能有效抵御重放攻击和内容篡改。</p>
+<hr>
+<h2 id="四、混淆与抗封锁机制"><a href="#四、混淆与抗封锁机制" class="headerlink" title="四、混淆与抗封锁机制"></a>四、混淆与抗封锁机制</h2><p>尽管 Shadowsocks 在内容层面实现了加密，但其<strong>通信特征（如连接模式、数据包结构）仍有可能暴露</strong>，被防火墙或 DPI（深度包检测）设备识别并封锁。</p>
+<h3 id="4-1-GFW-的探测方式"><a href="#4-1-GFW-的探测方式" class="headerlink" title="4.1 GFW 的探测方式"></a>4.1 GFW 的探测方式</h3><p>中国的 GFW 以及其他国家级防火墙系统可能通过以下手段识别 Shadowsocks：</p>
+<ul>
+<li>端口扫描：主动探测已知端口（如 8388）；</li>
+<li>流量特征分析：识别初始握手、固定数据结构等；</li>
+<li>模拟连接：主动构造 SS 协议数据，看服务端是否响应；</li>
+<li>统计学异常：判断连接持续时间、流量特征等与正常 HTTP 不符。</li>
+</ul>
+<hr>
+<h3 id="4-2-Shadowsocks-插件机制"><a href="#4-2-Shadowsocks-插件机制" class="headerlink" title="4.2 Shadowsocks 插件机制"></a>4.2 Shadowsocks 插件机制</h3><p>为应对上述封锁，Shadowsocks 设计了 <strong>插件（Plugin）接口</strong>，用于对流量进行“伪装”或额外封装，使其更像普通 HTTPS 或 WebSocket 通信。</p>
+<h4 id="常见插件类型："><a href="#常见插件类型：" class="headerlink" title="常见插件类型："></a>常见插件类型：</h4><table>
+<thead>
+<tr>
+<th>插件名</th>
+<th>封装方式</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>simple-obfs</code></td>
+<td>伪装为 HTTP&#x2F;TLS</td>
+<td>结构简单，伪装程度有限</td>
+</tr>
+<tr>
+<td><code>v2ray-plugin</code></td>
+<td>WebSocket&#x2F;TLS 封装</td>
+<td>高度伪装，适配 CDN，强推荐 ✅</td>
+</tr>
+<tr>
+<td><code>kcptun</code></td>
+<td>UDP + KCP 加速</td>
+<td>非抗封锁目的，偏向性能加速</td>
+</tr>
+</tbody></table>
+<h4 id="v2ray-plugin-封装流程："><a href="#v2ray-plugin-封装流程：" class="headerlink" title="v2ray-plugin 封装流程："></a><code>v2ray-plugin</code> 封装流程：</h4><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="code"><pre><span class="line">SS Payload → WebSocket Payload → TLS 封装 → 发送</span><br></pre></td></tr></table></figure></div>
+
+<p>可以搭配 HTTPS 网站做伪装，同时可托管于 CDN（如 Cloudflare）前面，使 IP 隐藏在边缘节点后，大大提升隐匿性。</p>
+<hr>
+<h3 id="4-3-ShadowsocksR-与替代协议"><a href="#4-3-ShadowsocksR-与替代协议" class="headerlink" title="4.3 ShadowsocksR 与替代协议"></a>4.3 ShadowsocksR 与替代协议</h3><h4 id="ShadowsocksR（SSR）"><a href="#ShadowsocksR（SSR）" class="headerlink" title="ShadowsocksR（SSR）"></a>ShadowsocksR（SSR）</h4><p>SSR 是一个非官方扩展版本，增加了：</p>
+<ul>
+<li>自定义混淆与协议（如 auth_chain、tls1.2_ticket_auth）；</li>
+<li>多种加扰机制；</li>
+<li>一定程度的抗探测能力。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>部分实现闭源或安全性未知；</li>
+<li>已被广泛识别，抗封锁效果正在减弱；</li>
+<li>维护不活跃，建议慎用。</li>
+</ul>
+<h4 id="替代方案（更强抗封锁）："><a href="#替代方案（更强抗封锁）：" class="headerlink" title="替代方案（更强抗封锁）："></a>替代方案（更强抗封锁）：</h4><ul>
+<li><strong>V2Ray（VMess &#x2F; VLESS）</strong>：高度模块化，支持伪装、分流、TLS、WS、H2 等多协议；</li>
+<li><strong>Trojan</strong>：天然 HTTPS 封装，极度难以检测；</li>
+<li><strong>Hysteria &#x2F; Tuic</strong>：基于 QUIC 和 UDP，适合高丢包或高延迟场景。</li>
+</ul>
+<hr>
+<h2 id="五、Shadowsocks-与其他代理技术对比"><a href="#五、Shadowsocks-与其他代理技术对比" class="headerlink" title="五、Shadowsocks 与其他代理技术对比"></a>五、Shadowsocks 与其他代理技术对比</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Shadowsocks</th>
+<th>VPN（如 WireGuard）</th>
+<th>V2Ray</th>
+<th>Trojan</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>加密机制</td>
+<td>AEAD 对称加密</td>
+<td>强加密 (IPSec&#x2F;Noise)</td>
+<td>多种混合机制</td>
+<td>TLS + AEAD</td>
+</tr>
+<tr>
+<td>协议类型</td>
+<td>自定义 SOCKS5</td>
+<td>层 3（L3）</td>
+<td>L4-L7 灵活链式结构</td>
+<td>HTTPS 原生协议</td>
+</tr>
+<tr>
+<td>流量伪装</td>
+<td>插件支持（需配置）</td>
+<td>无伪装</td>
+<td>原生支持 TLS&#x2F;WebSocket</td>
+<td>原生 HTTPS 流量</td>
+</tr>
+<tr>
+<td>抗封锁能力</td>
+<td>中等</td>
+<td>弱</td>
+<td>强</td>
+<td>非常强</td>
+</tr>
+<tr>
+<td>配置复杂度</td>
+<td>简单</td>
+<td>中</td>
+<td>略复杂</td>
+<td>中等</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><p>Shadowsocks 凭借其<strong>架构简单、性能优良、部署灵活</strong>的特点，至今仍是轻量级科学上网的首选之一。但要发挥其最大价值，需要：</p>
+<ul>
+<li><strong>使用 AEAD 加密算法</strong>（如 <code>aes-256-gcm</code> 或 <code>chacha20-ietf-poly1305</code>）；</li>
+<li><strong>搭配插件进行 TLS&#x2F;WebSocket 伪装</strong>；</li>
+<li><strong>避免使用默认端口和弱密码</strong>；</li>
+<li><strong>结合 CDN 中转进一步增强抗封锁性</strong>。</li>
+</ul>
+<p>在重度网络审查场景中，如 GFW 环境，Shadowsocks 仍可作为 V2Ray、Trojan 的代理客户端前置，参与多级混淆链路，发挥其在速度与灵活性上的优势。</p>
+]]></content>
+      <categories>
+        <category>学习</category>
+      </categories>
+      <tags>
+        <tag>代理</tag>
+        <tag>Shadowsocks</tag>
+        <tag>GFW</tag>
+        <tag>AEAD</tag>
+        <tag>学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>4 种技术方案打造随机图片站：从入门到进阶</title>
     <url>/2025/03/09/Random-plots/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>无论你是想搭建 <strong>壁纸站</strong>、<strong>趣味图库</strong>，还是为博客增加 <strong>随机头图</strong> 功能，本教程提供 <strong>4 种技术方案</strong>，涵盖：</p>
@@ -243,207 +440,33 @@ A[用户请求] --> B[Nginx] --> C[Node.js API] --> D[Lsky Pro 图床]</pre>
         <category>教程</category>
       </categories>
       <tags>
-        <tag>教程</tag>
         <tag>代理</tag>
+        <tag>教程</tag>
         <tag>squid</tag>
         <tag>Liunx</tag>
       </tags>
   </entry>
   <entry>
-    <title>Shadowsocks 技术全解：原理、加密与抗封锁机制详解</title>
-    <url>/2025/05/25/Complete-Explanation-of-Shadowsocks-Technology/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>在现代网络审查愈加严格的背景下，<strong>Shadowsocks（SS）</strong> 作为一种轻量级、灵活、易部署的加密代理协议，依然被广泛用于科学上网、保护网络隐私及穿越地域限制。</p>
-<p>本篇文章将从技术视角，全面剖析 Shadowsocks 的<strong>工作原理、加密机制</strong>及其<strong>抗封锁策略</strong>，并对其与其他代理方案做技术对比，助你深入理解其设计哲学与适用场景。</p>
-<hr>
-<h2 id="一、Shadowsocks-是什么？"><a href="#一、Shadowsocks-是什么？" class="headerlink" title="一、Shadowsocks 是什么？"></a>一、Shadowsocks 是什么？</h2><p>Shadowsocks 是一种基于 <strong>SOCKS5</strong> 协议封装的代理工具，其本质是一个<strong>端到端的加密代理协议</strong>，通过客户端与服务端协同工作，将用户请求安全地中转出境或绕过受限网络。</p>
-<h3 id="架构简述："><a href="#架构简述：" class="headerlink" title="架构简述："></a>架构简述：</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="code"><pre><span class="line">[User App] → [SS Client (本地)] → 加密数据 → [SS Server (远端)] → [目标网站]</span><br></pre></td></tr></table></figure></div>
-
-<ul>
-<li><strong>SS 客户端</strong>：本地提供 SOCKS5 接口，接收浏览器&#x2F;应用请求并加密。</li>
-<li><strong>SS 服务端</strong>：解密请求并代为访问目标网站，再将响应加密返回。</li>
-<li>整个通信链路是端到端加密的，只有本地与远端明文可见。</li>
-</ul>
-<hr>
-<h2 id="二、通信流程与协议设计"><a href="#二、通信流程与协议设计" class="headerlink" title="二、通信流程与协议设计"></a>二、通信流程与协议设计</h2><p>虽然 Shadowsocks 表面上支持 SOCKS5，<strong>但其与服务端之间通信是自定义协议</strong>，非标准 SOCKS5 转发。</p>
-<p>简化数据流如下：</p>
-<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="code"><pre><span class="line">1. 用户请求 → 本地 SS 客户端 → 转为 SS 协议数据包</span><br><span class="line">2. 客户端加密数据包（含目标地址 + 数据）</span><br><span class="line">3. 通过 TCP 或 UDP 发往服务端</span><br><span class="line">4. 服务端解密后访问目标网站，返回结果并加密</span><br><span class="line">5. 客户端解密并呈现结果</span><br></pre></td></tr></table></figure></div>
-
-<p>关键在于，<strong>请求地址本身也被加密</strong>，防止泄露请求意图，整个流程对中间人而言几乎完全不可见。</p>
-<hr>
-<h2 id="三、加密机制详解"><a href="#三、加密机制详解" class="headerlink" title="三、加密机制详解"></a>三、加密机制详解</h2><h3 id="3-1-对称加密基础"><a href="#3-1-对称加密基础" class="headerlink" title="3.1 对称加密基础"></a>3.1 对称加密基础</h3><p>Shadowsocks 使用对称加密，即客户端与服务端共享一个密码（<code>password</code>）和加密算法（<code>method</code>），所有加密解密均基于这一共享信息。</p>
-<hr>
-<h3 id="3-2-加密算法发展历程"><a href="#3-2-加密算法发展历程" class="headerlink" title="3.2 加密算法发展历程"></a>3.2 加密算法发展历程</h3><p>Shadowsocks 的加密方式大致经历了以下两个阶段：</p>
-<table>
-<thead>
-<tr>
-<th>阶段</th>
-<th>算法类别</th>
-<th>状态</th>
-<th>特征说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>初代</td>
-<td>Stream Cipher（流加密）</td>
-<td>已弃用 ❌</td>
-<td>只加密无认证，存在安全隐患</td>
-</tr>
-<tr>
-<td>现代推荐</td>
-<td>AEAD（带认证的加密）</td>
-<td>推荐 ✅</td>
-<td>加密+完整性校验，防中间人攻击</td>
-</tr>
-</tbody></table>
-<h4 id="流加密（已废弃）"><a href="#流加密（已废弃）" class="headerlink" title="流加密（已废弃）"></a>流加密（已废弃）</h4><p>如 <code>aes-256-cfb</code>、<code>chacha20</code>、<code>rc4-md5</code> 等采用传统流加密技术。问题在于：</p>
-<ul>
-<li>缺少认证，无法验证完整性；</li>
-<li>容易被重放攻击和伪造攻击利用；</li>
-<li>不再推荐在任何新部署中使用。</li>
-</ul>
-<hr>
-<h4 id="AEAD-模式（现代标准）"><a href="#AEAD-模式（现代标准）" class="headerlink" title="AEAD 模式（现代标准）"></a>AEAD 模式（现代标准）</h4><p>AEAD 是 Authenticated Encryption with Associated Data 的缩写，它集成了：</p>
-<ul>
-<li><strong>机密性（confidentiality）</strong>：防止数据被窃取；</li>
-<li><strong>完整性（integrity）</strong>：防止数据被修改；</li>
-<li><strong>重放防护</strong>：每次连接使用随机 nonce 保证加密唯一性。</li>
-</ul>
-<p>常用 AEAD 算法：</p>
-<ul>
-<li><code>aes-128-gcm</code></li>
-<li><code>aes-256-gcm</code></li>
-<li><code>chacha20-ietf-poly1305</code>（性能优，适用于移动设备）</li>
-</ul>
-<h4 id="加密数据结构（简略）："><a href="#加密数据结构（简略）：" class="headerlink" title="加密数据结构（简略）："></a>加密数据结构（简略）：</h4><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="code"><pre><span class="line">[Nonce][Encrypted Payload][Authentication Tag]</span><br></pre></td></tr></table></figure></div>
-
-<ul>
-<li>Nonce 每个会话随机生成，防止密文重复；</li>
-<li>Payload 包括目标地址、端口和应用数据；</li>
-<li>Tag 验证数据完整性。</li>
-</ul>
-<p>这使 Shadowsocks 能有效抵御重放攻击和内容篡改。</p>
-<hr>
-<h2 id="四、混淆与抗封锁机制"><a href="#四、混淆与抗封锁机制" class="headerlink" title="四、混淆与抗封锁机制"></a>四、混淆与抗封锁机制</h2><p>尽管 Shadowsocks 在内容层面实现了加密，但其<strong>通信特征（如连接模式、数据包结构）仍有可能暴露</strong>，被防火墙或 DPI（深度包检测）设备识别并封锁。</p>
-<h3 id="4-1-GFW-的探测方式"><a href="#4-1-GFW-的探测方式" class="headerlink" title="4.1 GFW 的探测方式"></a>4.1 GFW 的探测方式</h3><p>中国的 GFW 以及其他国家级防火墙系统可能通过以下手段识别 Shadowsocks：</p>
-<ul>
-<li>端口扫描：主动探测已知端口（如 8388）；</li>
-<li>流量特征分析：识别初始握手、固定数据结构等；</li>
-<li>模拟连接：主动构造 SS 协议数据，看服务端是否响应；</li>
-<li>统计学异常：判断连接持续时间、流量特征等与正常 HTTP 不符。</li>
-</ul>
-<hr>
-<h3 id="4-2-Shadowsocks-插件机制"><a href="#4-2-Shadowsocks-插件机制" class="headerlink" title="4.2 Shadowsocks 插件机制"></a>4.2 Shadowsocks 插件机制</h3><p>为应对上述封锁，Shadowsocks 设计了 <strong>插件（Plugin）接口</strong>，用于对流量进行“伪装”或额外封装，使其更像普通 HTTPS 或 WebSocket 通信。</p>
-<h4 id="常见插件类型："><a href="#常见插件类型：" class="headerlink" title="常见插件类型："></a>常见插件类型：</h4><table>
-<thead>
-<tr>
-<th>插件名</th>
-<th>封装方式</th>
-<th>特点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>simple-obfs</code></td>
-<td>伪装为 HTTP&#x2F;TLS</td>
-<td>结构简单，伪装程度有限</td>
-</tr>
-<tr>
-<td><code>v2ray-plugin</code></td>
-<td>WebSocket&#x2F;TLS 封装</td>
-<td>高度伪装，适配 CDN，强推荐 ✅</td>
-</tr>
-<tr>
-<td><code>kcptun</code></td>
-<td>UDP + KCP 加速</td>
-<td>非抗封锁目的，偏向性能加速</td>
-</tr>
-</tbody></table>
-<h4 id="v2ray-plugin-封装流程："><a href="#v2ray-plugin-封装流程：" class="headerlink" title="v2ray-plugin 封装流程："></a><code>v2ray-plugin</code> 封装流程：</h4><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="code"><pre><span class="line">SS Payload → WebSocket Payload → TLS 封装 → 发送</span><br></pre></td></tr></table></figure></div>
-
-<p>可以搭配 HTTPS 网站做伪装，同时可托管于 CDN（如 Cloudflare）前面，使 IP 隐藏在边缘节点后，大大提升隐匿性。</p>
-<hr>
-<h3 id="4-3-ShadowsocksR-与替代协议"><a href="#4-3-ShadowsocksR-与替代协议" class="headerlink" title="4.3 ShadowsocksR 与替代协议"></a>4.3 ShadowsocksR 与替代协议</h3><h4 id="ShadowsocksR（SSR）"><a href="#ShadowsocksR（SSR）" class="headerlink" title="ShadowsocksR（SSR）"></a>ShadowsocksR（SSR）</h4><p>SSR 是一个非官方扩展版本，增加了：</p>
-<ul>
-<li>自定义混淆与协议（如 auth_chain、tls1.2_ticket_auth）；</li>
-<li>多种加扰机制；</li>
-<li>一定程度的抗探测能力。</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>部分实现闭源或安全性未知；</li>
-<li>已被广泛识别，抗封锁效果正在减弱；</li>
-<li>维护不活跃，建议慎用。</li>
-</ul>
-<h4 id="替代方案（更强抗封锁）："><a href="#替代方案（更强抗封锁）：" class="headerlink" title="替代方案（更强抗封锁）："></a>替代方案（更强抗封锁）：</h4><ul>
-<li><strong>V2Ray（VMess &#x2F; VLESS）</strong>：高度模块化，支持伪装、分流、TLS、WS、H2 等多协议；</li>
-<li><strong>Trojan</strong>：天然 HTTPS 封装，极度难以检测；</li>
-<li><strong>Hysteria &#x2F; Tuic</strong>：基于 QUIC 和 UDP，适合高丢包或高延迟场景。</li>
-</ul>
-<hr>
-<h2 id="五、Shadowsocks-与其他代理技术对比"><a href="#五、Shadowsocks-与其他代理技术对比" class="headerlink" title="五、Shadowsocks 与其他代理技术对比"></a>五、Shadowsocks 与其他代理技术对比</h2><table>
-<thead>
-<tr>
-<th>特性</th>
-<th>Shadowsocks</th>
-<th>VPN（如 WireGuard）</th>
-<th>V2Ray</th>
-<th>Trojan</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>加密机制</td>
-<td>AEAD 对称加密</td>
-<td>强加密 (IPSec&#x2F;Noise)</td>
-<td>多种混合机制</td>
-<td>TLS + AEAD</td>
-</tr>
-<tr>
-<td>协议类型</td>
-<td>自定义 SOCKS5</td>
-<td>层 3（L3）</td>
-<td>L4-L7 灵活链式结构</td>
-<td>HTTPS 原生协议</td>
-</tr>
-<tr>
-<td>流量伪装</td>
-<td>插件支持（需配置）</td>
-<td>无伪装</td>
-<td>原生支持 TLS&#x2F;WebSocket</td>
-<td>原生 HTTPS 流量</td>
-</tr>
-<tr>
-<td>抗封锁能力</td>
-<td>中等</td>
-<td>弱</td>
-<td>强</td>
-<td>非常强</td>
-</tr>
-<tr>
-<td>配置复杂度</td>
-<td>简单</td>
-<td>中</td>
-<td>略复杂</td>
-<td>中等</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><p>Shadowsocks 凭借其<strong>架构简单、性能优良、部署灵活</strong>的特点，至今仍是轻量级科学上网的首选之一。但要发挥其最大价值，需要：</p>
-<ul>
-<li><strong>使用 AEAD 加密算法</strong>（如 <code>aes-256-gcm</code> 或 <code>chacha20-ietf-poly1305</code>）；</li>
-<li><strong>搭配插件进行 TLS&#x2F;WebSocket 伪装</strong>；</li>
-<li><strong>避免使用默认端口和弱密码</strong>；</li>
-<li><strong>结合 CDN 中转进一步增强抗封锁性</strong>。</li>
-</ul>
-<p>在重度网络审查场景中，如 GFW 环境，Shadowsocks 仍可作为 V2Ray、Trojan 的代理客户端前置，参与多级混淆链路，发挥其在速度与灵活性上的优势。</p>
+    <title>虚拟机vmware17密钥 vmware workstation17许可证密钥</title>
+    <url>/2023/04/18/VM17jhmy/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="vmware-workstation-17-pro激活密钥，通用批量永久激活许可"><a href="#vmware-workstation-17-pro激活密钥，通用批量永久激活许可" class="headerlink" title="vmware workstation 17 pro激活密钥，通用批量永久激活许可"></a>vmware workstation 17 pro激活密钥，通用批量永久激活许可</h2><p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
+<p><code>ZF3R0-FHED2-M80TY-8QYGC-NPKYF</code></p>
+<p><code>FC7D0-D1YDL-M8DXZ-CYPZE-P2AY6</code></p>
+<p><code>ZC3TK-63GE6-481JY-WWW5T-Z7ATA</code></p>
+<p><code>1Z0G9-67285-FZG78-ZL3Q2-234JG</code></p>
+<h2 id="vmware-workstation-17-pro密匙最新"><a href="#vmware-workstation-17-pro密匙最新" class="headerlink" title="vmware workstation 17 pro密匙最新"></a>vmware workstation 17 pro密匙最新</h2><p><code>4A4RR-813DK-M81A9-4U35H-06KND</code></p>
+<p><code>NZ4RR-FTK5H-H81C1-Q30QH-1V2LA</code></p>
+<p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
+<p><code>4Y09U-AJK97-089Z0-A3054-83KLA</code></p>
+<p><code>4C21U-2KK9Q-M8130-4V2QH-CF810</code></p>
+<p><code>MC60H-DWHD5-H80U9-6V85M-8280D</code></p>
 ]]></content>
       <categories>
-        <category>学习</category>
+        <category>资源分享</category>
       </categories>
       <tags>
-        <tag>代理</tag>
-        <tag>Shadowsocks</tag>
-        <tag>GFW</tag>
-        <tag>AEAD</tag>
-        <tag>学习</tag>
+        <tag>许可证密钥</tag>
+        <tag>VM虚拟机</tag>
       </tags>
   </entry>
   <entry>
@@ -724,29 +747,6 @@ B -->|否| D[结束]</pre>
       <tags>
         <tag>道法</tag>
         <tag>七下</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>虚拟机vmware17密钥 vmware workstation17许可证密钥</title>
-    <url>/2023/04/18/VM17jhmy/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="vmware-workstation-17-pro激活密钥，通用批量永久激活许可"><a href="#vmware-workstation-17-pro激活密钥，通用批量永久激活许可" class="headerlink" title="vmware workstation 17 pro激活密钥，通用批量永久激活许可"></a>vmware workstation 17 pro激活密钥，通用批量永久激活许可</h2><p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
-<p><code>ZF3R0-FHED2-M80TY-8QYGC-NPKYF</code></p>
-<p><code>FC7D0-D1YDL-M8DXZ-CYPZE-P2AY6</code></p>
-<p><code>ZC3TK-63GE6-481JY-WWW5T-Z7ATA</code></p>
-<p><code>1Z0G9-67285-FZG78-ZL3Q2-234JG</code></p>
-<h2 id="vmware-workstation-17-pro密匙最新"><a href="#vmware-workstation-17-pro密匙最新" class="headerlink" title="vmware workstation 17 pro密匙最新"></a>vmware workstation 17 pro密匙最新</h2><p><code>4A4RR-813DK-M81A9-4U35H-06KND</code></p>
-<p><code>NZ4RR-FTK5H-H81C1-Q30QH-1V2LA</code></p>
-<p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
-<p><code>4Y09U-AJK97-089Z0-A3054-83KLA</code></p>
-<p><code>4C21U-2KK9Q-M8130-4V2QH-CF810</code></p>
-<p><code>MC60H-DWHD5-H80U9-6V85M-8280D</code></p>
-]]></content>
-      <categories>
-        <category>资源分享</category>
-      </categories>
-      <tags>
-        <tag>许可证密钥</tag>
-        <tag>VM虚拟机</tag>
       </tags>
   </entry>
   <entry>
