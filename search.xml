@@ -1,6 +1,278 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Squid 代理服务器部署与优化指南</title>
+    <url>/2025/03/23/Squid-Prox-Serve-Deploymen-Optimizatio-Guid/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="一、核心网络配置"><a href="#一、核心网络配置" class="headerlink" title="一、核心网络配置"></a><strong>一、核心网络配置</strong></h3><p><strong>配置文件位置</strong>：<code>/etc/squid/squid.conf</code> 文件起始部分  </p>
+<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">http_port 3128</span><br><span class="line">https_port 2443 <span class="attr">cert</span>=/etc/squid/ssl/cert.pem key=/etc/squid/ssl/key.pem</span><br><span class="line">visible_hostname proxy-server01</span><br><span class="line">via off</span><br><span class="line">forwarded_for delete</span><br></pre></td></tr></table></figure></div>
+<p><strong>作用与原理</strong>：  </p>
+<ul>
+<li><code>http_port</code>：监听标准代理端口（明文传输）  </li>
+<li><code>https_port</code>：启用 HTTPS 代理并指定 TLS 证书路径（加密传输）  </li>
+<li><code>visible_hostname</code>：定义代理服务器的对外标识（用于日志和错误页面）  </li>
+<li><code>via</code> &amp; <code>forwarded_for</code>：隐藏客户端真实 IP（安全防护）</li>
+</ul>
+<hr>
+<h3 id="二、访问控制列表（ACL）"><a href="#二、访问控制列表（ACL）" class="headerlink" title="二、访问控制列表（ACL）"></a><strong>二、访问控制列表（ACL）</strong></h3><p><strong>位置</strong>：主配置文件中部，<code>acl</code> 规则区  </p>
+<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">acl corporate_net src 192.168.1.0/24</span><br><span class="line">acl work_hours time MTWHF 09:00-18:00</span><br><span class="line">acl safe_ports port 80 443 21</span><br><span class="line">acl blocked_sites dstdomain &quot;/etc/squid/blocked.domains&quot;</span><br></pre></td></tr></table></figure></div>
+<p><strong>技术细节</strong>：  </p>
+<ul>
+<li><code>src</code>：基于源 IP 过滤（CIDR 格式）  </li>
+<li><code>time</code>：时间范围控制（MTWHF 表示周一到周五）  </li>
+<li><code>dstdomain</code>：加载外部文件中的域名黑名单  </li>
+<li><strong>文件示例</strong> (<code>/etc/squid/blocked.domains</code>)：  <div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.youtube.com</span><br><span class="line">.socialmedia.*</span><br></pre></td></tr></table></figure></div></li>
+</ul>
+<hr>
+<h3 id="三、认证模块配置"><a href="#三、认证模块配置" class="headerlink" title="三、认证模块配置"></a><strong>三、认证模块配置</strong></h3><p><strong>位置</strong>：紧接基础网络配置之后  </p>
+<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">auth_param basic program /usr/lib/squid/basic_ncsa_auth /etc/squid/passwd</span><br><span class="line">auth_param basic realm &quot;Corporate Proxy Auth&quot;</span><br><span class="line">acl auth_users proxy_auth REQUIRED</span><br></pre></td></tr></table></figure></div>
+<p><strong>操作说明</strong>：  </p>
+<ol>
+<li>安装认证工具：  <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Debian</span></span><br><span class="line">sudo apt install apache2-utils</span><br><span class="line"><span class="comment"># RHEL</span></span><br><span class="line">sudo yum install httpd-tools</span><br></pre></td></tr></table></figure></div></li>
+<li>创建密码文件：  <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">sudo htpasswd -c /etc/squid/passwd user1</span><br><span class="line">sudo <span class="built_in">chmod</span> 600 /etc/squid/passwd</span><br></pre></td></tr></table></figure></div></li>
+</ol>
+<hr>
+<h3 id="四、访问规则链"><a href="#四、访问规则链" class="headerlink" title="四、访问规则链"></a><strong>四、访问规则链</strong></h3><p><strong>位置</strong>：ACL 定义之后  </p>
+<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">http_access allow corporate_net work_hours auth_users</span><br><span class="line">http_access deny blocked_sites</span><br><span class="line">http_access deny !safe_ports</span><br><span class="line">http_access allow localhost</span><br><span class="line">http_access deny all</span><br></pre></td></tr></table></figure></div>
+<p><strong>优先级逻辑</strong>：  </p>
+<ol>
+<li>允许企业网段在工时通过认证访问  </li>
+<li>阻止黑名单域名  </li>
+<li>禁止非安全端口访问  </li>
+<li>最后拒绝所有其他请求</li>
+</ol>
+<hr>
+<h3 id="五、缓存优化配置"><a href="#五、缓存优化配置" class="headerlink" title="五、缓存优化配置"></a><strong>五、缓存优化配置</strong></h3><p><strong>位置</strong>：配置文件中部  </p>
+<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">cache_mem 4096 MB</span><br><span class="line">maximum_object_size_in_memory 256 KB</span><br><span class="line">cache_dir aufs /data/cache 50000 16 256</span><br><span class="line">cache_replacement_policy heap LFUDA</span><br><span class="line">refresh_pattern . 1440 20% 10080</span><br></pre></td></tr></table></figure></div>
+<p><strong>参数解析</strong>：  </p>
+<ul>
+<li><code>aufs</code>：使用异步 I&#x2F;O 存储格式（高并发场景）  </li>
+<li><code>50000</code>：缓存目录总大小（单位 MB）  </li>
+<li><code>16/256</code>：一级&#x2F;二级子目录数量（提升文件检索效率）  </li>
+<li><code>LFUDA</code>：缓存替换算法（综合访问频率和新鲜度）</li>
+</ul>
+<hr>
+<h3 id="六、集群负载均衡"><a href="#六、集群负载均衡" class="headerlink" title="六、集群负载均衡"></a><strong>六、集群负载均衡</strong></h3><p><strong>位置</strong>：配置文件尾部  </p>
+<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">cache_peer 192.168.2.101 parent 3128 0 proxy-only round-robin</span><br><span class="line">cache_peer 192.168.2.102 parent 3128 0 proxy-only round-robin</span><br><span class="line">cache_peer_access 192.168.2.101 allow all</span><br></pre></td></tr></table></figure></div>
+<p><strong>架构说明</strong>：  </p>
+<ul>
+<li><code>parent</code>：定义上游代理节点  </li>
+<li><code>round-robin</code>：请求轮询分发  </li>
+<li><code>proxy-only</code>：仅转发请求不缓存（适用于边缘节点）</li>
+</ul>
+<hr>
+<h3 id="七、日志与监控"><a href="#七、日志与监控" class="headerlink" title="七、日志与监控"></a><strong>七、日志与监控</strong></h3><p><strong>位置</strong>：配置文件尾部  </p>
+<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">access_log daemon:/var/log/squid/access.log squid</span><br><span class="line">cache_log /var/log/squid/cache.log</span><br><span class="line">snmp_port 3401</span><br><span class="line">snmp_access allow monitor_ips</span><br></pre></td></tr></table></figure></div>
+<p><strong>监控操作</strong>：  </p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 实时流量分析</span></span><br><span class="line">sudo <span class="built_in">tail</span> -f /var/log/squid/access.log | awk <span class="string">&#x27;&#123;print $3,$7,$9&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># SNMP 监控设置</span></span><br><span class="line">sudo squid -k snmp -D</span><br><span class="line">snmpwalk -v 2c -c public localhost:3401 .1.3.6.1.4.1.3495.1</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h3 id="八、安全加固措施"><a href="#八、安全加固措施" class="headerlink" title="八、安全加固措施"></a><strong>八、安全加固措施</strong></h3><p><strong>1. 防火墙规则</strong>  </p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 只允许内网访问代理端口</span></span><br><span class="line">sudo ufw allow from 192.168.0.0/16 to any port 3128,2443</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>2. SELinux 策略</strong>  </p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">sudo semanage port -a -t http_cache_port_t -p tcp 2443</span><br><span class="line">sudo setsebool -P squid_connect_any 1</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>3. 证书自动续期</strong>  </p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 添加 crontab 任务</span></span><br><span class="line">0 3 1 * * /usr/bin/certbot renew --quiet --deploy-hook <span class="string">&quot;systemctl reload squid&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h3 id="九、故障排查速查表"><a href="#九、故障排查速查表" class="headerlink" title="九、故障排查速查表"></a><strong>九、故障排查速查表</strong></h3><table>
+<thead>
+<tr>
+<th><strong>现象</strong></th>
+<th><strong>诊断命令</strong></th>
+<th><strong>解决方案</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>客户端无法连接</td>
+<td><code>sudo squid -k parse</code></td>
+<td>检查配置文件语法错误</td>
+</tr>
+<tr>
+<td>认证失败</td>
+<td><code>tail -n 50 /var/log/squid/cache.log</code></td>
+<td>验证密码文件权限和格式</td>
+</tr>
+<tr>
+<td>高内存占用</td>
+<td><code>squidclient mgr:mem</code></td>
+<td>调整 <code>cache_mem</code> 参数</td>
+</tr>
+<tr>
+<td>HTTPS 代理证书错误</td>
+<td><code>openssl s_client -connect :2443</code></td>
+<td>检查证书链完整性</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="十、配置文件结构示意图"><a href="#十、配置文件结构示意图" class="headerlink" title="十、配置文件结构示意图"></a><strong>十、配置文件结构示意图</strong></h3><pre class="mermaid">graph TD
+    A[网络参数] --> B[认证模块]
+    B --> C[ACL定义]
+    C --> D[访问规则]
+    D --> E[缓存策略]
+    E --> F[集群配置]
+    F --> G[日志管理]</pre>
+
+<p>通过以上结构化配置，可实现：  </p>
+<ul>
+<li><strong>企业级安全</strong>：TLS 加密 + IP 白名单 + 时段控制  </li>
+<li><strong>高性能缓存</strong>：智能替换算法 + 内存分级管理  </li>
+<li><strong>高可用架构</strong>：多节点负载均衡 + 自动故障转移  </li>
+<li><strong>易维护性</strong>：标准化配置 + 自动化监控</li>
+</ul>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>代理</tag>
+        <tag>squid</tag>
+        <tag>Liunx</tag>
+        <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4 种技术方案打造随机图片站：从入门到进阶</title>
+    <url>/2025/03/09/Random-plots/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>无论你是想搭建 <strong>壁纸站</strong>、<strong>趣味图库</strong>，还是为博客增加 <strong>随机头图</strong> 功能，本教程提供 <strong>4 种技术方案</strong>，涵盖：</p>
+<p>✅ 纯前端静态方案（适合新手）<br>✅ 云函数代理方案（适合中小型项目）<br>✅ 自建后端 API 方案（适合企业级应用）<br>✅ 无服务器跳转方案（适合极客玩家）  </p>
+<hr>
+<h2 id="1-方案对比：如何选择最适合你的技术路线？"><a href="#1-方案对比：如何选择最适合你的技术路线？" class="headerlink" title="1. 方案对比：如何选择最适合你的技术路线？"></a><strong>1. 方案对比：如何选择最适合你的技术路线？</strong></h2><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>所需技能</th>
+<th>成本</th>
+<th>适合人群</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="#2-%E7%BA%AF%E5%89%8D%E7%AB%AF%E6%96%B9%E6%A1%88-%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA">纯前端方案</a></td>
+<td>HTML &#x2F; JS</td>
+<td>免费</td>
+<td>个人博客 &#x2F; 新手</td>
+</tr>
+<tr>
+<td><a href="#3-%E4%BA%91%E5%87%BD%E6%95%B0%E4%BB%A3%E7%90%86%E6%96%B9%E6%A1%88-cloudflare-worker">云函数代理</a></td>
+<td>云服务 &#x2F; JS</td>
+<td>低</td>
+<td>中小型项目</td>
+</tr>
+<tr>
+<td><a href="#4-%E8%87%AA%E5%BB%BA%E5%90%8E%E7%AB%AF-api-%E4%B8%93%E4%B8%9A%E7%89%88">自建后端 API</a></td>
+<td>Node.js + 运维</td>
+<td>中</td>
+<td>企业 &#x2F; 技术团队</td>
+</tr>
+<tr>
+<td><a href="#5-%E6%97%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B7%B3%E8%BD%AC-%E6%9E%81%E5%AE%A2%E7%8E%A9%E6%B3%95">无服务器跳转</a></td>
+<td>Nginx 配置</td>
+<td>免费</td>
+<td>极客 &#x2F; SEO 不敏感场景</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-纯前端方案：快速搭建"><a href="#2-纯前端方案：快速搭建" class="headerlink" title="2. 纯前端方案：快速搭建"></a><strong>2. 纯前端方案：快速搭建</strong></h2><h3 id="2-1-核心代码（适用于-GitHub-Pages-Vercel）"><a href="#2-1-核心代码（适用于-GitHub-Pages-Vercel）" class="headerlink" title="2.1 核心代码（适用于 GitHub Pages &#x2F; Vercel）"></a><strong>2.1 核心代码</strong>（适用于 GitHub Pages &#x2F; Vercel）</h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片站<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;description&quot;</span> <span class="attr">content</span>=<span class="string">&quot;一个轻量级的随机壁纸网站，每次刷新都不同！&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;keywords&quot;</span> <span class="attr">content</span>=<span class="string">&quot;壁纸, 随机图片, 图片 API, 免费图片资源&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">img</span> &#123; <span class="attribute">max-width</span>: <span class="number">100%</span>; <span class="attribute">border-radius</span>: <span class="number">10px</span>; <span class="attribute">box-shadow</span>: <span class="number">0</span> <span class="number">4px</span> <span class="number">12px</span> <span class="built_in">rgba</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0.15</span>); &#125;</span></span><br><span class="line"><span class="language-css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">id</span>=<span class="string">&quot;randomImg&quot;</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;随机图片&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">const</span> images = [</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?nature&quot;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?city&quot;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?animal&quot;</span></span></span><br><span class="line"><span class="language-javascript">        ];</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">function</span> <span class="title function_">loadImage</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="keyword">const</span> imgElement = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;randomImg&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">            imgElement.<span class="property">src</span> = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)] + <span class="string">&quot;&amp;t=&quot;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">        </span></span><br><span class="line"><span class="language-javascript">        <span class="title function_">loadImage</span>();</span></span><br><span class="line"><span class="language-javascript">        <span class="built_in">setInterval</span>(loadImage, <span class="number">10000</span>);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-2-部署步骤"><a href="#2-2-部署步骤" class="headerlink" title="2.2 部署步骤"></a><strong>2.2 部署步骤</strong></h3><ol>
+<li>保存为 <code>index.html</code></li>
+<li>上传至 GitHub 仓库</li>
+<li>开启 GitHub Pages 服务</li>
+</ol>
+<h3 id="2-3-方案特点"><a href="#2-3-方案特点" class="headerlink" title="2.3 方案特点"></a><strong>2.3 方案特点</strong></h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5 分钟快速上线</td>
+<td>需手动维护图片列表</td>
+</tr>
+<tr>
+<td>完全免费</td>
+<td>URL 暴露，容易被采集</td>
+</tr>
+<tr>
+<td>无服务器依赖</td>
+<td>无法动态扩展</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3-云函数代理方案（Cloudflare-Worker）"><a href="#3-云函数代理方案（Cloudflare-Worker）" class="headerlink" title="3. 云函数代理方案（Cloudflare Worker）"></a><strong>3. 云函数代理方案（Cloudflare Worker）</strong></h2><h3 id="3-1-架构"><a href="#3-1-架构" class="headerlink" title="3.1 架构"></a><strong>3.1 架构</strong></h3><pre class="mermaid">graph TD;
+A[用户] --> B[访问 Cloudflare Worker] --> C[Worker 随机选择图片] --> D[返回图片内容]</pre>
+<h3 id="3-2-Cloudflare-Worker-代码"><a href="#3-2-Cloudflare-Worker-代码" class="headerlink" title="3.2 Cloudflare Worker 代码"></a><strong>3.2 Cloudflare Worker 代码</strong></h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">IMAGE_SOURCES</span> = [</span><br><span class="line">    <span class="string">&quot;https://lsky-pro.com/images/1.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://oss.aliyuncs.com/bucket/2.png&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://img.usercontent.com/3.webp&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="title function_">fetch</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> targetUrl = <span class="variable constant_">IMAGE_SOURCES</span>[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * <span class="variable constant_">IMAGE_SOURCES</span>.<span class="property">length</span>)];</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">fetch</span>(targetUrl, &#123; <span class="attr">headers</span>: &#123; <span class="string">&quot;Cache-Control&quot;</span>: <span class="string">&quot;public, max-age=7200&quot;</span> &#125; &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="4-自建后端-API（专业版）"><a href="#4-自建后端-API（专业版）" class="headerlink" title="4. 自建后端 API（专业版）"></a><strong>4. 自建后端 API（专业版）</strong></h2><h3 id="4-1-系统架构"><a href="#4-1-系统架构" class="headerlink" title="4.1 系统架构"></a><strong>4.1 系统架构</strong></h3><pre class="mermaid">graph TD;
+A[用户请求] --> B[Nginx] --> C[Node.js API] --> D[Lsky Pro 图床]</pre>
+<h3 id="4-2-Node-js-API-代码"><a href="#4-2-Node-js-API-代码" class="headerlink" title="4.2 Node.js API 代码"></a><strong>4.2 Node.js API 代码</strong></h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">&#x27;cors&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cors</span>());</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> cachedImages = [];</span><br><span class="line"><span class="keyword">let</span> lastUpdate = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">refreshImages</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">&#x27;https://lsky.yourdomain.com/api/v1/images?per_page=100&#x27;</span>);</span><br><span class="line">        <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="title function_">json</span>();</span><br><span class="line">        cachedImages = data.<span class="property">data</span>.<span class="title function_">map</span>(<span class="function"><span class="params">img</span> =&gt;</span> img.<span class="property">links</span>.<span class="property">url</span>);</span><br><span class="line">        lastUpdate = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;刷新图片失败:&#x27;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setInterval</span>(refreshImages, <span class="number">300000</span>);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/random&#x27;</span>, <span class="keyword">async</span> (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title class_">Date</span>.<span class="title function_">now</span>() - lastUpdate &gt; <span class="number">300000</span>) &#123; <span class="keyword">await</span> <span class="title function_">refreshImages</span>(); &#125;</span><br><span class="line">    <span class="keyword">if</span> (cachedImages.<span class="property">length</span> === <span class="number">0</span>) &#123; <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">503</span>).<span class="title function_">json</span>(&#123; <span class="attr">error</span>: <span class="string">&quot;服务暂不可用&quot;</span> &#125;); &#125;</span><br><span class="line">    res.<span class="title function_">redirect</span>(<span class="number">302</span>, cachedImages[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * cachedImages.<span class="property">length</span>)]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>, <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;API 运行于 http://localhost:3000&#x27;</span>));</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="5-无服务器跳转（极客玩法）"><a href="#5-无服务器跳转（极客玩法）" class="headerlink" title="5. 无服务器跳转（极客玩法）"></a><strong>5. 无服务器跳转（极客玩法）</strong></h2><h3 id="5-1-Nginx-伪装跳转"><a href="#5-1-Nginx-伪装跳转" class="headerlink" title="5.1 Nginx 伪装跳转"></a><strong>5.1 Nginx 伪装跳转</strong></h3><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> img.yourdomain.com;</span><br><span class="line">    <span class="section">location</span> = /random.jpg &#123; <span class="attribute">rewrite</span><span class="regexp"> ^</span> /random.html <span class="literal">break</span>; &#125;</span><br><span class="line">    <span class="section">location</span> / &#123; <span class="attribute">root</span> /var/www/static; <span class="attribute">index</span> index.html; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h3 id="5-2-HTML-页面自动跳转"><a href="#5-2-HTML-页面自动跳转" class="headerlink" title="5.2 HTML 页面自动跳转"></a><strong>5.2 HTML 页面自动跳转</strong></h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片跳转<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="title function_">fetch</span>(<span class="string">&#x27;/image-list.json&#x27;</span>).<span class="title function_">then</span>(<span class="function"><span class="params">res</span> =&gt;</span> res.<span class="title function_">json</span>()).<span class="title function_">then</span>(<span class="function"><span class="params">images</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)] + <span class="string">&#x27;?t=&#x27;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();</span></span><br><span class="line"><span class="language-javascript">    &#125;);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>正在加载随机图片...<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="6-终极优化：速度与安全"><a href="#6-终极优化：速度与安全" class="headerlink" title="6. 终极优化：速度与安全"></a><strong>6. 终极优化：速度与安全</strong></h2><h3 id="6-1-缓存策略"><a href="#6-1-缓存策略" class="headerlink" title="6.1 缓存策略"></a><strong>6.1 缓存策略</strong></h3><table>
+<thead>
+<tr>
+<th>层级</th>
+<th>方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>浏览器</td>
+<td><code>Cache-Control: max-age=86400</code></td>
+</tr>
+<tr>
+<td>CDN</td>
+<td>Cloudflare 缓存规则</td>
+</tr>
+<tr>
+<td>服务端</td>
+<td>Redis 缓存图片列表</td>
+</tr>
+</tbody></table>
+<h3 id="6-2-防盗链设置"><a href="#6-2-防盗链设置" class="headerlink" title="6.2 防盗链设置"></a><strong>6.2 防盗链设置</strong></h3><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">valid_referers</span> <span class="literal">none</span> <span class="literal">blocked</span> <span class="regexp">*.yourdomain.com</span>;</span><br><span class="line"><span class="attribute">if</span> (<span class="variable">$invalid_referer</span>) &#123; <span class="attribute">return</span> <span class="number">403</span>; &#125;</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<p>本教程提供从 <strong>0 到 1</strong> 的完整方案，适用于不同技术水平的开发者，赶快试试吧！🚀</p>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>教程</tag>
+        <tag>图床</tag>
+        <tag>头图</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>虚拟机vmware17密钥 vmware workstation17许可证密钥</title>
+    <url>/2023/04/18/VM17jhmy/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="vmware-workstation-17-pro激活密钥，通用批量永久激活许可"><a href="#vmware-workstation-17-pro激活密钥，通用批量永久激活许可" class="headerlink" title="vmware workstation 17 pro激活密钥，通用批量永久激活许可"></a>vmware workstation 17 pro激活密钥，通用批量永久激活许可</h2><p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
+<p><code>ZF3R0-FHED2-M80TY-8QYGC-NPKYF</code></p>
+<p><code>FC7D0-D1YDL-M8DXZ-CYPZE-P2AY6</code></p>
+<p><code>ZC3TK-63GE6-481JY-WWW5T-Z7ATA</code></p>
+<p><code>1Z0G9-67285-FZG78-ZL3Q2-234JG</code></p>
+<h2 id="vmware-workstation-17-pro密匙最新"><a href="#vmware-workstation-17-pro密匙最新" class="headerlink" title="vmware workstation 17 pro密匙最新"></a>vmware workstation 17 pro密匙最新</h2><p><code>4A4RR-813DK-M81A9-4U35H-06KND</code></p>
+<p><code>NZ4RR-FTK5H-H81C1-Q30QH-1V2LA</code></p>
+<p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
+<p><code>4Y09U-AJK97-089Z0-A3054-83KLA</code></p>
+<p><code>4C21U-2KK9Q-M8130-4V2QH-CF810</code></p>
+<p><code>MC60H-DWHD5-H80U9-6V85M-8280D</code></p>
+]]></content>
+      <categories>
+        <category>资源分享</category>
+      </categories>
+      <tags>
+        <tag>许可证密钥</tag>
+        <tag>VM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Shadowsocks 技术全解：原理、加密与抗封锁机制详解</title>
     <url>/2025/05/25/Complete-Explanation-of-Shadowsocks-Technology/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>在现代网络审查愈加严格的背景下，<strong>Shadowsocks（SS）</strong> 作为一种轻量级、灵活、易部署的加密代理协议，依然被广泛用于科学上网、保护网络隐私及穿越地域限制。</p>
@@ -195,255 +467,6 @@
         <tag>GFW</tag>
         <tag>AEAD</tag>
         <tag>学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>4 种技术方案打造随机图片站：从入门到进阶</title>
-    <url>/2025/03/09/Random-plots/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>无论你是想搭建 <strong>壁纸站</strong>、<strong>趣味图库</strong>，还是为博客增加 <strong>随机头图</strong> 功能，本教程提供 <strong>4 种技术方案</strong>，涵盖：</p>
-<p>✅ 纯前端静态方案（适合新手）<br>✅ 云函数代理方案（适合中小型项目）<br>✅ 自建后端 API 方案（适合企业级应用）<br>✅ 无服务器跳转方案（适合极客玩家）  </p>
-<hr>
-<h2 id="1-方案对比：如何选择最适合你的技术路线？"><a href="#1-方案对比：如何选择最适合你的技术路线？" class="headerlink" title="1. 方案对比：如何选择最适合你的技术路线？"></a><strong>1. 方案对比：如何选择最适合你的技术路线？</strong></h2><table>
-<thead>
-<tr>
-<th>方案</th>
-<th>所需技能</th>
-<th>成本</th>
-<th>适合人群</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="#2-%E7%BA%AF%E5%89%8D%E7%AB%AF%E6%96%B9%E6%A1%88-%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA">纯前端方案</a></td>
-<td>HTML &#x2F; JS</td>
-<td>免费</td>
-<td>个人博客 &#x2F; 新手</td>
-</tr>
-<tr>
-<td><a href="#3-%E4%BA%91%E5%87%BD%E6%95%B0%E4%BB%A3%E7%90%86%E6%96%B9%E6%A1%88-cloudflare-worker">云函数代理</a></td>
-<td>云服务 &#x2F; JS</td>
-<td>低</td>
-<td>中小型项目</td>
-</tr>
-<tr>
-<td><a href="#4-%E8%87%AA%E5%BB%BA%E5%90%8E%E7%AB%AF-api-%E4%B8%93%E4%B8%9A%E7%89%88">自建后端 API</a></td>
-<td>Node.js + 运维</td>
-<td>中</td>
-<td>企业 &#x2F; 技术团队</td>
-</tr>
-<tr>
-<td><a href="#5-%E6%97%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B7%B3%E8%BD%AC-%E6%9E%81%E5%AE%A2%E7%8E%A9%E6%B3%95">无服务器跳转</a></td>
-<td>Nginx 配置</td>
-<td>免费</td>
-<td>极客 &#x2F; SEO 不敏感场景</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="2-纯前端方案：快速搭建"><a href="#2-纯前端方案：快速搭建" class="headerlink" title="2. 纯前端方案：快速搭建"></a><strong>2. 纯前端方案：快速搭建</strong></h2><h3 id="2-1-核心代码（适用于-GitHub-Pages-Vercel）"><a href="#2-1-核心代码（适用于-GitHub-Pages-Vercel）" class="headerlink" title="2.1 核心代码（适用于 GitHub Pages &#x2F; Vercel）"></a><strong>2.1 核心代码</strong>（适用于 GitHub Pages &#x2F; Vercel）</h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片站<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;description&quot;</span> <span class="attr">content</span>=<span class="string">&quot;一个轻量级的随机壁纸网站，每次刷新都不同！&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;keywords&quot;</span> <span class="attr">content</span>=<span class="string">&quot;壁纸, 随机图片, 图片 API, 免费图片资源&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">img</span> &#123; <span class="attribute">max-width</span>: <span class="number">100%</span>; <span class="attribute">border-radius</span>: <span class="number">10px</span>; <span class="attribute">box-shadow</span>: <span class="number">0</span> <span class="number">4px</span> <span class="number">12px</span> <span class="built_in">rgba</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0.15</span>); &#125;</span></span><br><span class="line"><span class="language-css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">id</span>=<span class="string">&quot;randomImg&quot;</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;随机图片&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">const</span> images = [</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?nature&quot;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?city&quot;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="string">&quot;https://source.unsplash.com/random/1920x1080?animal&quot;</span></span></span><br><span class="line"><span class="language-javascript">        ];</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">function</span> <span class="title function_">loadImage</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="keyword">const</span> imgElement = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;randomImg&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">            imgElement.<span class="property">src</span> = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)] + <span class="string">&quot;&amp;t=&quot;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">        </span></span><br><span class="line"><span class="language-javascript">        <span class="title function_">loadImage</span>();</span></span><br><span class="line"><span class="language-javascript">        <span class="built_in">setInterval</span>(loadImage, <span class="number">10000</span>);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="2-2-部署步骤"><a href="#2-2-部署步骤" class="headerlink" title="2.2 部署步骤"></a><strong>2.2 部署步骤</strong></h3><ol>
-<li>保存为 <code>index.html</code></li>
-<li>上传至 GitHub 仓库</li>
-<li>开启 GitHub Pages 服务</li>
-</ol>
-<h3 id="2-3-方案特点"><a href="#2-3-方案特点" class="headerlink" title="2.3 方案特点"></a><strong>2.3 方案特点</strong></h3><table>
-<thead>
-<tr>
-<th>优点</th>
-<th>缺点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>5 分钟快速上线</td>
-<td>需手动维护图片列表</td>
-</tr>
-<tr>
-<td>完全免费</td>
-<td>URL 暴露，容易被采集</td>
-</tr>
-<tr>
-<td>无服务器依赖</td>
-<td>无法动态扩展</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="3-云函数代理方案（Cloudflare-Worker）"><a href="#3-云函数代理方案（Cloudflare-Worker）" class="headerlink" title="3. 云函数代理方案（Cloudflare Worker）"></a><strong>3. 云函数代理方案（Cloudflare Worker）</strong></h2><h3 id="3-1-架构"><a href="#3-1-架构" class="headerlink" title="3.1 架构"></a><strong>3.1 架构</strong></h3><pre class="mermaid">graph TD;
-A[用户] --> B[访问 Cloudflare Worker] --> C[Worker 随机选择图片] --> D[返回图片内容]</pre>
-<h3 id="3-2-Cloudflare-Worker-代码"><a href="#3-2-Cloudflare-Worker-代码" class="headerlink" title="3.2 Cloudflare Worker 代码"></a><strong>3.2 Cloudflare Worker 代码</strong></h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">IMAGE_SOURCES</span> = [</span><br><span class="line">    <span class="string">&quot;https://lsky-pro.com/images/1.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://oss.aliyuncs.com/bucket/2.png&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://img.usercontent.com/3.webp&quot;</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="title function_">fetch</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> targetUrl = <span class="variable constant_">IMAGE_SOURCES</span>[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * <span class="variable constant_">IMAGE_SOURCES</span>.<span class="property">length</span>)];</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">fetch</span>(targetUrl, &#123; <span class="attr">headers</span>: &#123; <span class="string">&quot;Cache-Control&quot;</span>: <span class="string">&quot;public, max-age=7200&quot;</span> &#125; &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h2 id="4-自建后端-API（专业版）"><a href="#4-自建后端-API（专业版）" class="headerlink" title="4. 自建后端 API（专业版）"></a><strong>4. 自建后端 API（专业版）</strong></h2><h3 id="4-1-系统架构"><a href="#4-1-系统架构" class="headerlink" title="4.1 系统架构"></a><strong>4.1 系统架构</strong></h3><pre class="mermaid">graph TD;
-A[用户请求] --> B[Nginx] --> C[Node.js API] --> D[Lsky Pro 图床]</pre>
-<h3 id="4-2-Node-js-API-代码"><a href="#4-2-Node-js-API-代码" class="headerlink" title="4.2 Node.js API 代码"></a><strong>4.2 Node.js API 代码</strong></h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">&#x27;cors&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cors</span>());</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> cachedImages = [];</span><br><span class="line"><span class="keyword">let</span> lastUpdate = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">refreshImages</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">&#x27;https://lsky.yourdomain.com/api/v1/images?per_page=100&#x27;</span>);</span><br><span class="line">        <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="title function_">json</span>();</span><br><span class="line">        cachedImages = data.<span class="property">data</span>.<span class="title function_">map</span>(<span class="function"><span class="params">img</span> =&gt;</span> img.<span class="property">links</span>.<span class="property">url</span>);</span><br><span class="line">        lastUpdate = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;刷新图片失败:&#x27;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setInterval</span>(refreshImages, <span class="number">300000</span>);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/random&#x27;</span>, <span class="keyword">async</span> (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title class_">Date</span>.<span class="title function_">now</span>() - lastUpdate &gt; <span class="number">300000</span>) &#123; <span class="keyword">await</span> <span class="title function_">refreshImages</span>(); &#125;</span><br><span class="line">    <span class="keyword">if</span> (cachedImages.<span class="property">length</span> === <span class="number">0</span>) &#123; <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">503</span>).<span class="title function_">json</span>(&#123; <span class="attr">error</span>: <span class="string">&quot;服务暂不可用&quot;</span> &#125;); &#125;</span><br><span class="line">    res.<span class="title function_">redirect</span>(<span class="number">302</span>, cachedImages[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * cachedImages.<span class="property">length</span>)]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>, <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;API 运行于 http://localhost:3000&#x27;</span>));</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h2 id="5-无服务器跳转（极客玩法）"><a href="#5-无服务器跳转（极客玩法）" class="headerlink" title="5. 无服务器跳转（极客玩法）"></a><strong>5. 无服务器跳转（极客玩法）</strong></h2><h3 id="5-1-Nginx-伪装跳转"><a href="#5-1-Nginx-伪装跳转" class="headerlink" title="5.1 Nginx 伪装跳转"></a><strong>5.1 Nginx 伪装跳转</strong></h3><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> img.yourdomain.com;</span><br><span class="line">    <span class="section">location</span> = /random.jpg &#123; <span class="attribute">rewrite</span><span class="regexp"> ^</span> /random.html <span class="literal">break</span>; &#125;</span><br><span class="line">    <span class="section">location</span> / &#123; <span class="attribute">root</span> /var/www/static; <span class="attribute">index</span> index.html; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<h3 id="5-2-HTML-页面自动跳转"><a href="#5-2-HTML-页面自动跳转" class="headerlink" title="5.2 HTML 页面自动跳转"></a><strong>5.2 HTML 页面自动跳转</strong></h3><div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>随机图片跳转<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="title function_">fetch</span>(<span class="string">&#x27;/image-list.json&#x27;</span>).<span class="title function_">then</span>(<span class="function"><span class="params">res</span> =&gt;</span> res.<span class="title function_">json</span>()).<span class="title function_">then</span>(<span class="function"><span class="params">images</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = images[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * images.<span class="property">length</span>)] + <span class="string">&#x27;?t=&#x27;</span> + <span class="title class_">Date</span>.<span class="title function_">now</span>();</span></span><br><span class="line"><span class="language-javascript">    &#125;);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>正在加载随机图片...<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h2 id="6-终极优化：速度与安全"><a href="#6-终极优化：速度与安全" class="headerlink" title="6. 终极优化：速度与安全"></a><strong>6. 终极优化：速度与安全</strong></h2><h3 id="6-1-缓存策略"><a href="#6-1-缓存策略" class="headerlink" title="6.1 缓存策略"></a><strong>6.1 缓存策略</strong></h3><table>
-<thead>
-<tr>
-<th>层级</th>
-<th>方案</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>浏览器</td>
-<td><code>Cache-Control: max-age=86400</code></td>
-</tr>
-<tr>
-<td>CDN</td>
-<td>Cloudflare 缓存规则</td>
-</tr>
-<tr>
-<td>服务端</td>
-<td>Redis 缓存图片列表</td>
-</tr>
-</tbody></table>
-<h3 id="6-2-防盗链设置"><a href="#6-2-防盗链设置" class="headerlink" title="6.2 防盗链设置"></a><strong>6.2 防盗链设置</strong></h3><div class="code-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">valid_referers</span> <span class="literal">none</span> <span class="literal">blocked</span> <span class="regexp">*.yourdomain.com</span>;</span><br><span class="line"><span class="attribute">if</span> (<span class="variable">$invalid_referer</span>) &#123; <span class="attribute">return</span> <span class="number">403</span>; &#125;</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<p>本教程提供从 <strong>0 到 1</strong> 的完整方案，适用于不同技术水平的开发者，赶快试试吧！🚀</p>
-]]></content>
-      <categories>
-        <category>教程</category>
-      </categories>
-      <tags>
-        <tag>图床</tag>
-        <tag>头图</tag>
-        <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Squid 代理服务器部署与优化指南</title>
-    <url>/2025/03/23/Squid-Prox-Serve-Deploymen-Optimizatio-Guid/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="一、核心网络配置"><a href="#一、核心网络配置" class="headerlink" title="一、核心网络配置"></a><strong>一、核心网络配置</strong></h3><p><strong>配置文件位置</strong>：<code>/etc/squid/squid.conf</code> 文件起始部分  </p>
-<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">http_port 3128</span><br><span class="line">https_port 2443 <span class="attr">cert</span>=/etc/squid/ssl/cert.pem key=/etc/squid/ssl/key.pem</span><br><span class="line">visible_hostname proxy-server01</span><br><span class="line">via off</span><br><span class="line">forwarded_for delete</span><br></pre></td></tr></table></figure></div>
-<p><strong>作用与原理</strong>：  </p>
-<ul>
-<li><code>http_port</code>：监听标准代理端口（明文传输）  </li>
-<li><code>https_port</code>：启用 HTTPS 代理并指定 TLS 证书路径（加密传输）  </li>
-<li><code>visible_hostname</code>：定义代理服务器的对外标识（用于日志和错误页面）  </li>
-<li><code>via</code> &amp; <code>forwarded_for</code>：隐藏客户端真实 IP（安全防护）</li>
-</ul>
-<hr>
-<h3 id="二、访问控制列表（ACL）"><a href="#二、访问控制列表（ACL）" class="headerlink" title="二、访问控制列表（ACL）"></a><strong>二、访问控制列表（ACL）</strong></h3><p><strong>位置</strong>：主配置文件中部，<code>acl</code> 规则区  </p>
-<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">acl corporate_net src 192.168.1.0/24</span><br><span class="line">acl work_hours time MTWHF 09:00-18:00</span><br><span class="line">acl safe_ports port 80 443 21</span><br><span class="line">acl blocked_sites dstdomain &quot;/etc/squid/blocked.domains&quot;</span><br></pre></td></tr></table></figure></div>
-<p><strong>技术细节</strong>：  </p>
-<ul>
-<li><code>src</code>：基于源 IP 过滤（CIDR 格式）  </li>
-<li><code>time</code>：时间范围控制（MTWHF 表示周一到周五）  </li>
-<li><code>dstdomain</code>：加载外部文件中的域名黑名单  </li>
-<li><strong>文件示例</strong> (<code>/etc/squid/blocked.domains</code>)：  <div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.youtube.com</span><br><span class="line">.socialmedia.*</span><br></pre></td></tr></table></figure></div></li>
-</ul>
-<hr>
-<h3 id="三、认证模块配置"><a href="#三、认证模块配置" class="headerlink" title="三、认证模块配置"></a><strong>三、认证模块配置</strong></h3><p><strong>位置</strong>：紧接基础网络配置之后  </p>
-<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">auth_param basic program /usr/lib/squid/basic_ncsa_auth /etc/squid/passwd</span><br><span class="line">auth_param basic realm &quot;Corporate Proxy Auth&quot;</span><br><span class="line">acl auth_users proxy_auth REQUIRED</span><br></pre></td></tr></table></figure></div>
-<p><strong>操作说明</strong>：  </p>
-<ol>
-<li>安装认证工具：  <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Debian</span></span><br><span class="line">sudo apt install apache2-utils</span><br><span class="line"><span class="comment"># RHEL</span></span><br><span class="line">sudo yum install httpd-tools</span><br></pre></td></tr></table></figure></div></li>
-<li>创建密码文件：  <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">sudo htpasswd -c /etc/squid/passwd user1</span><br><span class="line">sudo <span class="built_in">chmod</span> 600 /etc/squid/passwd</span><br></pre></td></tr></table></figure></div></li>
-</ol>
-<hr>
-<h3 id="四、访问规则链"><a href="#四、访问规则链" class="headerlink" title="四、访问规则链"></a><strong>四、访问规则链</strong></h3><p><strong>位置</strong>：ACL 定义之后  </p>
-<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">http_access allow corporate_net work_hours auth_users</span><br><span class="line">http_access deny blocked_sites</span><br><span class="line">http_access deny !safe_ports</span><br><span class="line">http_access allow localhost</span><br><span class="line">http_access deny all</span><br></pre></td></tr></table></figure></div>
-<p><strong>优先级逻辑</strong>：  </p>
-<ol>
-<li>允许企业网段在工时通过认证访问  </li>
-<li>阻止黑名单域名  </li>
-<li>禁止非安全端口访问  </li>
-<li>最后拒绝所有其他请求</li>
-</ol>
-<hr>
-<h3 id="五、缓存优化配置"><a href="#五、缓存优化配置" class="headerlink" title="五、缓存优化配置"></a><strong>五、缓存优化配置</strong></h3><p><strong>位置</strong>：配置文件中部  </p>
-<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">cache_mem 4096 MB</span><br><span class="line">maximum_object_size_in_memory 256 KB</span><br><span class="line">cache_dir aufs /data/cache 50000 16 256</span><br><span class="line">cache_replacement_policy heap LFUDA</span><br><span class="line">refresh_pattern . 1440 20% 10080</span><br></pre></td></tr></table></figure></div>
-<p><strong>参数解析</strong>：  </p>
-<ul>
-<li><code>aufs</code>：使用异步 I&#x2F;O 存储格式（高并发场景）  </li>
-<li><code>50000</code>：缓存目录总大小（单位 MB）  </li>
-<li><code>16/256</code>：一级&#x2F;二级子目录数量（提升文件检索效率）  </li>
-<li><code>LFUDA</code>：缓存替换算法（综合访问频率和新鲜度）</li>
-</ul>
-<hr>
-<h3 id="六、集群负载均衡"><a href="#六、集群负载均衡" class="headerlink" title="六、集群负载均衡"></a><strong>六、集群负载均衡</strong></h3><p><strong>位置</strong>：配置文件尾部  </p>
-<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">cache_peer 192.168.2.101 parent 3128 0 proxy-only round-robin</span><br><span class="line">cache_peer 192.168.2.102 parent 3128 0 proxy-only round-robin</span><br><span class="line">cache_peer_access 192.168.2.101 allow all</span><br></pre></td></tr></table></figure></div>
-<p><strong>架构说明</strong>：  </p>
-<ul>
-<li><code>parent</code>：定义上游代理节点  </li>
-<li><code>round-robin</code>：请求轮询分发  </li>
-<li><code>proxy-only</code>：仅转发请求不缓存（适用于边缘节点）</li>
-</ul>
-<hr>
-<h3 id="七、日志与监控"><a href="#七、日志与监控" class="headerlink" title="七、日志与监控"></a><strong>七、日志与监控</strong></h3><p><strong>位置</strong>：配置文件尾部  </p>
-<div class="code-container" data-rel="Ini"><figure class="iseeu highlight ini"><table><tr><td class="code"><pre><span class="line">access_log daemon:/var/log/squid/access.log squid</span><br><span class="line">cache_log /var/log/squid/cache.log</span><br><span class="line">snmp_port 3401</span><br><span class="line">snmp_access allow monitor_ips</span><br></pre></td></tr></table></figure></div>
-<p><strong>监控操作</strong>：  </p>
-<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 实时流量分析</span></span><br><span class="line">sudo <span class="built_in">tail</span> -f /var/log/squid/access.log | awk <span class="string">&#x27;&#123;print $3,$7,$9&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># SNMP 监控设置</span></span><br><span class="line">sudo squid -k snmp -D</span><br><span class="line">snmpwalk -v 2c -c public localhost:3401 .1.3.6.1.4.1.3495.1</span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h3 id="八、安全加固措施"><a href="#八、安全加固措施" class="headerlink" title="八、安全加固措施"></a><strong>八、安全加固措施</strong></h3><p><strong>1. 防火墙规则</strong>  </p>
-<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 只允许内网访问代理端口</span></span><br><span class="line">sudo ufw allow from 192.168.0.0/16 to any port 3128,2443</span><br></pre></td></tr></table></figure></div>
-
-<p><strong>2. SELinux 策略</strong>  </p>
-<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">sudo semanage port -a -t http_cache_port_t -p tcp 2443</span><br><span class="line">sudo setsebool -P squid_connect_any 1</span><br></pre></td></tr></table></figure></div>
-
-<p><strong>3. 证书自动续期</strong>  </p>
-<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 添加 crontab 任务</span></span><br><span class="line">0 3 1 * * /usr/bin/certbot renew --quiet --deploy-hook <span class="string">&quot;systemctl reload squid&quot;</span></span><br></pre></td></tr></table></figure></div>
-
-<hr>
-<h3 id="九、故障排查速查表"><a href="#九、故障排查速查表" class="headerlink" title="九、故障排查速查表"></a><strong>九、故障排查速查表</strong></h3><table>
-<thead>
-<tr>
-<th><strong>现象</strong></th>
-<th><strong>诊断命令</strong></th>
-<th><strong>解决方案</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>客户端无法连接</td>
-<td><code>sudo squid -k parse</code></td>
-<td>检查配置文件语法错误</td>
-</tr>
-<tr>
-<td>认证失败</td>
-<td><code>tail -n 50 /var/log/squid/cache.log</code></td>
-<td>验证密码文件权限和格式</td>
-</tr>
-<tr>
-<td>高内存占用</td>
-<td><code>squidclient mgr:mem</code></td>
-<td>调整 <code>cache_mem</code> 参数</td>
-</tr>
-<tr>
-<td>HTTPS 代理证书错误</td>
-<td><code>openssl s_client -connect :2443</code></td>
-<td>检查证书链完整性</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="十、配置文件结构示意图"><a href="#十、配置文件结构示意图" class="headerlink" title="十、配置文件结构示意图"></a><strong>十、配置文件结构示意图</strong></h3><pre class="mermaid">graph TD
-    A[网络参数] --> B[认证模块]
-    B --> C[ACL定义]
-    C --> D[访问规则]
-    D --> E[缓存策略]
-    E --> F[集群配置]
-    F --> G[日志管理]</pre>
-
-<p>通过以上结构化配置，可实现：  </p>
-<ul>
-<li><strong>企业级安全</strong>：TLS 加密 + IP 白名单 + 时段控制  </li>
-<li><strong>高性能缓存</strong>：智能替换算法 + 内存分级管理  </li>
-<li><strong>高可用架构</strong>：多节点负载均衡 + 自动故障转移  </li>
-<li><strong>易维护性</strong>：标准化配置 + 自动化监控</li>
-</ul>
-]]></content>
-      <categories>
-        <category>教程</category>
-      </categories>
-      <tags>
-        <tag>代理</tag>
-        <tag>教程</tag>
-        <tag>squid</tag>
-        <tag>Liunx</tag>
       </tags>
   </entry>
   <entry>
@@ -702,54 +725,6 @@ B -->|否| D[结束]</pre>
       </tags>
   </entry>
   <entry>
-    <title>七下道法第二单元知识点秘籍</title>
-    <url>/2024/04/27/qxdfdrdwzsd/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="1-情绪的影响或作用"><a href="#1-情绪的影响或作用" class="headerlink" title="1.情绪的影响或作用"></a>1.情绪的影响或作用</h2><p>1.情绪影响着我们的观念和行动。<br>2.激励我们克服困难、努力向上（积极）；<br>3.让我们因为某个小小的挫败而止步不前（消极）。</p>
-<h2 id="2-青春期的情绪"><a href="#2-青春期的情绪" class="headerlink" title="2.青春期的情绪"></a>2.青春期的情绪</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p><strong>反应强烈、波动与固执、细腻性、闭锁性、表现性。</strong></p>
-<h3 id="正确面对"><a href="#正确面对" class="headerlink" title="正确面对"></a>正确面对</h3><p>1.善于激发正面的情绪感受,让生活更绚烂多彩<br>2.学习积极面对负面情绪，同样是我们成长过程中需要经历的。</p>
-<h2 id="3-为什么要管理情绪"><a href="#3-为什么要管理情绪" class="headerlink" title="3.为什么要管理情绪"></a>3.为什么要管理情绪</h2><p>1.人与人之间的情绪会相互感染；不仅与自己的身心健康有关，而且关乎人际交往。<br>2.保持积极的心态，享受喜悦和快乐，让我们的青春生活更加美好；<br>3.适度的负面情绪，可以帮助我们适应突发事件，但持续地处于负面情绪状态，则可能危害我们的身心健康；<br>4.学会合理地调节情绪，有助于我们更好地适应环境，成为情绪的主人。</p>
-<h2 id="4-如何正确表达自己的情绪？（如何调节自己的情绪）"><a href="#4-如何正确表达自己的情绪？（如何调节自己的情绪）" class="headerlink" title="4.如何正确表达自己的情绪？（如何调节自己的情绪）"></a>4.如何正确表达自己的情绪？（如何调节自己的情绪）</h2><p>1.在人际交往中，了解自己的情绪，接受它们；学会以恰当的方式表达出来。<br>2.正确对待自己的各种情绪感受，掌握一些调节情绪的方法。如<strong>改变认知评价、转移注意、合理宣泄、放松训练等</strong>。</p>
-<h2 id="5-愤怒管理的方法"><a href="#5-愤怒管理的方法" class="headerlink" title="5.愤怒管理的方法"></a>5.愤怒管理的方法</h2><p>1.与信赖的<strong>长者交流</strong>。<br>2.<strong>自我提醒</strong>，避免情绪失控。<br>3.运用“我感到愤怒，是因为……”的<strong>表达</strong>方式。<br>4.寻找一种适合自己排解愤怒的<strong>活动形式</strong>。<br>5.写一封<strong>信</strong>，把愤怒的感受写出来。</p>
-<h2 id="6-如何安慰他人"><a href="#6-如何安慰他人" class="headerlink" title="6.如何安慰他人"></a>6.如何安慰他人</h2><p>如为他做些体贴的事；做一个耐心的听众；设身处地，向他表示理解；帮助他转移注意等。</p>
-<h2 id="7-情绪与情感的关系（理解，常考选择题）"><a href="#7-情绪与情感的关系（理解，常考选择题）" class="headerlink" title="7.情绪与情感的关系（理解，常考选择题）"></a>7.情绪与情感的关系（理解，常考选择题）</h2><h3 id="（1）联系："><a href="#（1）联系：" class="headerlink" title="（1）联系："></a>（1）联系：</h3><p>1.情感与情绪<strong>紧密相关</strong>，情感伴随着情绪反应逐渐<strong>积累</strong>和<strong>发展</strong>；<br>2.情绪随着时间的推移形成<strong>比较稳定的倾向</strong>，可能产生某种情感。<br>3.情绪和情感二者都是<strong>复杂的</strong>。</p>
-<h3 id="（2）区别"><a href="#（2）区别" class="headerlink" title="（2）区别:"></a>（2）区别:</h3><p>1.情绪<strong>短暂</strong>、<strong>不稳定</strong>，会<strong>随着情境的改变而变化</strong>；<br>2.情感是在生活中<strong>不断强化、逐渐积累</strong>的，<strong>相对稳定</strong>。</p>
-<h2 id="8-情感的作用（为什么、意义、影响、重要性）（背诵，常考材料题"><a href="#8-情感的作用（为什么、意义、影响、重要性）（背诵，常考材料题" class="headerlink" title="8.情感的作用（为什么、意义、影响、重要性）（背诵，常考材料题"></a>8.情感的作用（为什么、意义、影响、重要性）（背诵，常考材料题</h2><p>1.情感是人<strong>最基本的精神需求</strong>。<br>2.情感<strong>反映着</strong>我们对人对事的<strong>态度和观念</strong>，影响着我们的<strong>判断和选择</strong>，驱使我们做出<strong>行动</strong>。<br>3.情感与<strong>想象力、创造力</strong>相关。丰富深刻的情感<strong>有助于</strong>我们更全面的<strong>观察事物、探索未知</strong>。<br>4.情感伴随着<strong>生活经历</strong>不断<strong>积累</strong>和<strong>发展</strong>，这正是我们<strong>生命成长</strong>的体现。</p>
-<h2 id="9-负面情绪对成长的意义？如何正确认识负面情感？"><a href="#9-负面情绪对成长的意义？如何正确认识负面情感？" class="headerlink" title="9.负面情绪对成长的意义？如何正确认识负面情感？"></a>9.负面情绪对成长的意义？如何正确认识负面情感？</h2><p>1.生活中某些负面的情感体验会给我们带来不舒服、不愉快的负面感受，但对于我们成长也有<strong>意义</strong>；<br>2.<strong>丰富我们的人生阅历</strong>,使我们的生命变得更加<strong>饱满丰盈</strong>。<br>3.学会<strong>承受</strong>负面感受,<strong>将其转变为成长的助力</strong>,从中获得美好的情感体验，不断成长。</p>
-<h2 id="10-如何在品味情感中成长？（背诵，常考材料题）"><a href="#10-如何在品味情感中成长？（背诵，常考材料题）" class="headerlink" title="10.如何在品味情感中成长？（背诵，常考材料题）"></a>10.如何在品味情感中成长？（背诵，常考材料题）</h2><h3 id="（1）体味美好情感。"><a href="#（1）体味美好情感。" class="headerlink" title="（1）体味美好情感。"></a>（1）体味美好情感。</h3><p>1.觉察生活中美好的人和事物，逐渐丰富我们的美好情感，<strong>表达</strong>我们的愿望，促进我们的<strong>精神发展</strong>；<br>2.情由心生，它是在人的社会交往、互动中<strong>自然引发的，不能强迫</strong>；<br>3.通过<strong>阅读</strong>、<strong>与人交往</strong>、参与有意义的<strong>社会活动</strong>等方式<strong>获得美好情感</strong>。<br>4.<strong>掌握</strong>创造正面情感体验的<strong>方法</strong>。如完成一项自己喜欢的活动；帮助他人；走进博物馆或大自然；欣赏艺术作品等。<br>5.学会<strong>承受</strong>并善于<strong>将负面情感转变为成长的助力</strong>。</p>
-<h3 id="（2）传递情感正能量。"><a href="#（2）传递情感正能量。" class="headerlink" title="（2）传递情感正能量。"></a>（2）传递情感正能量。</h3><p>1.<strong>主动影响环境</strong>，用自己的<strong>热情</strong>和<strong>行动</strong>来影响环境；<br>2.<strong>学会关心：</strong>认真<em>倾听或观察</em>；用<em>可能被接受</em>的方式向对方表示<em>关心</em>；关注对方的<em>态度和反应</em>等。<br>3.在与他人的情感交流中，学会<strong>表达与回应</strong>,形成共鸣,<strong>传递</strong>美好情感，<strong>传递</strong>生命正能量；<br>4.在与他人的情感交流中，传递美好的情感，传递生命的正能量。</p>
-]]></content>
-      <categories>
-        <category>学习</category>
-      </categories>
-      <tags>
-        <tag>道法</tag>
-        <tag>七下</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>虚拟机vmware17密钥 vmware workstation17许可证密钥</title>
-    <url>/2023/04/18/VM17jhmy/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="vmware-workstation-17-pro激活密钥，通用批量永久激活许可"><a href="#vmware-workstation-17-pro激活密钥，通用批量永久激活许可" class="headerlink" title="vmware workstation 17 pro激活密钥，通用批量永久激活许可"></a>vmware workstation 17 pro激活密钥，通用批量永久激活许可</h2><p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
-<p><code>ZF3R0-FHED2-M80TY-8QYGC-NPKYF</code></p>
-<p><code>FC7D0-D1YDL-M8DXZ-CYPZE-P2AY6</code></p>
-<p><code>ZC3TK-63GE6-481JY-WWW5T-Z7ATA</code></p>
-<p><code>1Z0G9-67285-FZG78-ZL3Q2-234JG</code></p>
-<h2 id="vmware-workstation-17-pro密匙最新"><a href="#vmware-workstation-17-pro密匙最新" class="headerlink" title="vmware workstation 17 pro密匙最新"></a>vmware workstation 17 pro密匙最新</h2><p><code>4A4RR-813DK-M81A9-4U35H-06KND</code></p>
-<p><code>NZ4RR-FTK5H-H81C1-Q30QH-1V2LA</code></p>
-<p><code>JU090-6039P-08409-8J0QH-2YR7F</code></p>
-<p><code>4Y09U-AJK97-089Z0-A3054-83KLA</code></p>
-<p><code>4C21U-2KK9Q-M8130-4V2QH-CF810</code></p>
-<p><code>MC60H-DWHD5-H80U9-6V85M-8280D</code></p>
-]]></content>
-      <categories>
-        <category>资源分享</category>
-      </categories>
-      <tags>
-        <tag>许可证密钥</tag>
-        <tag>VM虚拟机</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>在Linux上安装和启用SMB（使用Samba）</title>
     <url>/2025/03/06/use-smb-in-linux-with-samba/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="1-安装Samba软件包"><a href="#1-安装Samba软件包" class="headerlink" title="1.安装Samba软件包"></a>1.安装Samba软件包</h2><p><code>Samba</code> 是一个实现 <code>SMB</code> 协议的开源软件包，它允许 <code>Linux</code> 系统与 <code>Windows</code> 系统或其他 <code>Linux</code> 系统共享文件。首先，我们需要安装 <code>Samba</code>。</p>
@@ -824,9 +799,34 @@ B -->|否| D[结束]</pre>
         <category>教程</category>
       </categories>
       <tags>
-        <tag>教程</tag>
         <tag>Liunx</tag>
+        <tag>教程</tag>
         <tag>SMB</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>七下道法第二单元知识点秘籍</title>
+    <url>/2024/04/27/qxdfdrdwzsd/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="1-情绪的影响或作用"><a href="#1-情绪的影响或作用" class="headerlink" title="1.情绪的影响或作用"></a>1.情绪的影响或作用</h2><p>1.情绪影响着我们的观念和行动。<br>2.激励我们克服困难、努力向上（积极）；<br>3.让我们因为某个小小的挫败而止步不前（消极）。</p>
+<h2 id="2-青春期的情绪"><a href="#2-青春期的情绪" class="headerlink" title="2.青春期的情绪"></a>2.青春期的情绪</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p><strong>反应强烈、波动与固执、细腻性、闭锁性、表现性。</strong></p>
+<h3 id="正确面对"><a href="#正确面对" class="headerlink" title="正确面对"></a>正确面对</h3><p>1.善于激发正面的情绪感受,让生活更绚烂多彩<br>2.学习积极面对负面情绪，同样是我们成长过程中需要经历的。</p>
+<h2 id="3-为什么要管理情绪"><a href="#3-为什么要管理情绪" class="headerlink" title="3.为什么要管理情绪"></a>3.为什么要管理情绪</h2><p>1.人与人之间的情绪会相互感染；不仅与自己的身心健康有关，而且关乎人际交往。<br>2.保持积极的心态，享受喜悦和快乐，让我们的青春生活更加美好；<br>3.适度的负面情绪，可以帮助我们适应突发事件，但持续地处于负面情绪状态，则可能危害我们的身心健康；<br>4.学会合理地调节情绪，有助于我们更好地适应环境，成为情绪的主人。</p>
+<h2 id="4-如何正确表达自己的情绪？（如何调节自己的情绪）"><a href="#4-如何正确表达自己的情绪？（如何调节自己的情绪）" class="headerlink" title="4.如何正确表达自己的情绪？（如何调节自己的情绪）"></a>4.如何正确表达自己的情绪？（如何调节自己的情绪）</h2><p>1.在人际交往中，了解自己的情绪，接受它们；学会以恰当的方式表达出来。<br>2.正确对待自己的各种情绪感受，掌握一些调节情绪的方法。如<strong>改变认知评价、转移注意、合理宣泄、放松训练等</strong>。</p>
+<h2 id="5-愤怒管理的方法"><a href="#5-愤怒管理的方法" class="headerlink" title="5.愤怒管理的方法"></a>5.愤怒管理的方法</h2><p>1.与信赖的<strong>长者交流</strong>。<br>2.<strong>自我提醒</strong>，避免情绪失控。<br>3.运用“我感到愤怒，是因为……”的<strong>表达</strong>方式。<br>4.寻找一种适合自己排解愤怒的<strong>活动形式</strong>。<br>5.写一封<strong>信</strong>，把愤怒的感受写出来。</p>
+<h2 id="6-如何安慰他人"><a href="#6-如何安慰他人" class="headerlink" title="6.如何安慰他人"></a>6.如何安慰他人</h2><p>如为他做些体贴的事；做一个耐心的听众；设身处地，向他表示理解；帮助他转移注意等。</p>
+<h2 id="7-情绪与情感的关系（理解，常考选择题）"><a href="#7-情绪与情感的关系（理解，常考选择题）" class="headerlink" title="7.情绪与情感的关系（理解，常考选择题）"></a>7.情绪与情感的关系（理解，常考选择题）</h2><h3 id="（1）联系："><a href="#（1）联系：" class="headerlink" title="（1）联系："></a>（1）联系：</h3><p>1.情感与情绪<strong>紧密相关</strong>，情感伴随着情绪反应逐渐<strong>积累</strong>和<strong>发展</strong>；<br>2.情绪随着时间的推移形成<strong>比较稳定的倾向</strong>，可能产生某种情感。<br>3.情绪和情感二者都是<strong>复杂的</strong>。</p>
+<h3 id="（2）区别"><a href="#（2）区别" class="headerlink" title="（2）区别:"></a>（2）区别:</h3><p>1.情绪<strong>短暂</strong>、<strong>不稳定</strong>，会<strong>随着情境的改变而变化</strong>；<br>2.情感是在生活中<strong>不断强化、逐渐积累</strong>的，<strong>相对稳定</strong>。</p>
+<h2 id="8-情感的作用（为什么、意义、影响、重要性）（背诵，常考材料题"><a href="#8-情感的作用（为什么、意义、影响、重要性）（背诵，常考材料题" class="headerlink" title="8.情感的作用（为什么、意义、影响、重要性）（背诵，常考材料题"></a>8.情感的作用（为什么、意义、影响、重要性）（背诵，常考材料题</h2><p>1.情感是人<strong>最基本的精神需求</strong>。<br>2.情感<strong>反映着</strong>我们对人对事的<strong>态度和观念</strong>，影响着我们的<strong>判断和选择</strong>，驱使我们做出<strong>行动</strong>。<br>3.情感与<strong>想象力、创造力</strong>相关。丰富深刻的情感<strong>有助于</strong>我们更全面的<strong>观察事物、探索未知</strong>。<br>4.情感伴随着<strong>生活经历</strong>不断<strong>积累</strong>和<strong>发展</strong>，这正是我们<strong>生命成长</strong>的体现。</p>
+<h2 id="9-负面情绪对成长的意义？如何正确认识负面情感？"><a href="#9-负面情绪对成长的意义？如何正确认识负面情感？" class="headerlink" title="9.负面情绪对成长的意义？如何正确认识负面情感？"></a>9.负面情绪对成长的意义？如何正确认识负面情感？</h2><p>1.生活中某些负面的情感体验会给我们带来不舒服、不愉快的负面感受，但对于我们成长也有<strong>意义</strong>；<br>2.<strong>丰富我们的人生阅历</strong>,使我们的生命变得更加<strong>饱满丰盈</strong>。<br>3.学会<strong>承受</strong>负面感受,<strong>将其转变为成长的助力</strong>,从中获得美好的情感体验，不断成长。</p>
+<h2 id="10-如何在品味情感中成长？（背诵，常考材料题）"><a href="#10-如何在品味情感中成长？（背诵，常考材料题）" class="headerlink" title="10.如何在品味情感中成长？（背诵，常考材料题）"></a>10.如何在品味情感中成长？（背诵，常考材料题）</h2><h3 id="（1）体味美好情感。"><a href="#（1）体味美好情感。" class="headerlink" title="（1）体味美好情感。"></a>（1）体味美好情感。</h3><p>1.觉察生活中美好的人和事物，逐渐丰富我们的美好情感，<strong>表达</strong>我们的愿望，促进我们的<strong>精神发展</strong>；<br>2.情由心生，它是在人的社会交往、互动中<strong>自然引发的，不能强迫</strong>；<br>3.通过<strong>阅读</strong>、<strong>与人交往</strong>、参与有意义的<strong>社会活动</strong>等方式<strong>获得美好情感</strong>。<br>4.<strong>掌握</strong>创造正面情感体验的<strong>方法</strong>。如完成一项自己喜欢的活动；帮助他人；走进博物馆或大自然；欣赏艺术作品等。<br>5.学会<strong>承受</strong>并善于<strong>将负面情感转变为成长的助力</strong>。</p>
+<h3 id="（2）传递情感正能量。"><a href="#（2）传递情感正能量。" class="headerlink" title="（2）传递情感正能量。"></a>（2）传递情感正能量。</h3><p>1.<strong>主动影响环境</strong>，用自己的<strong>热情</strong>和<strong>行动</strong>来影响环境；<br>2.<strong>学会关心：</strong>认真<em>倾听或观察</em>；用<em>可能被接受</em>的方式向对方表示<em>关心</em>；关注对方的<em>态度和反应</em>等。<br>3.在与他人的情感交流中，学会<strong>表达与回应</strong>,形成共鸣,<strong>传递</strong>美好情感，<strong>传递</strong>生命正能量；<br>4.在与他人的情感交流中，传递美好的情感，传递生命的正能量。</p>
+]]></content>
+      <categories>
+        <category>学习</category>
+      </categories>
+      <tags>
+        <tag>道法</tag>
+        <tag>七下</tag>
       </tags>
   </entry>
 </search>
