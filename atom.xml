@@ -6,7 +6,7 @@
   <link href="https://blog.fengmayou.top/atom.xml" rel="self"/>
   
   <link href="https://blog.fengmayou.top/"/>
-  <updated>2025-05-25T14:22:56.000Z</updated>
+  <updated>2025-08-15T15:26:50.891Z</updated>
   <id>https://blog.fengmayou.top/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>瞎开发之GitHub Image Uploader ———— 用 GitHub 打造你的专属图床</title>
+    <link href="https://blog.fengmayou.top/2025/08/15/GitHub-Image-Uploader/"/>
+    <id>https://blog.fengmayou.top/2025/08/15/GitHub-Image-Uploader/</id>
+    <published>2025-08-15T06:29:11.000Z</published>
+    <updated>2025-08-15T15:26:50.891Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="为什么要做这个工具？"><a href="#为什么要做这个工具？" class="headerlink" title="为什么要做这个工具？"></a>为什么要做这个工具？</h2><p>为了能更好的用<a class="link"   href="https://github.com/" rel="external nofollow noreferrer" >GitHub<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>打造专属图床</p><blockquote><p>开发本工具的原因是因为不满于picgo只能管理提供其上传的内容但不能管理整个存储库所已就开发了这款工具</p></blockquote><h2 id="功能亮点"><a href="#功能亮点" class="headerlink" title="功能亮点"></a>功能亮点</h2><ul><li><strong>批量上传图片</strong>（PNG&#x2F;JPG&#x2F;JPEG&#x2F;GIF）</li><li><strong>在线预览 &amp; 双击放大</strong></li><li><strong>全库图片管理</strong></li><li><strong>一键复制直链 &#x2F; Markdown 链接</strong></li><li><strong>懒加载 + 动态批量加载</strong>（不卡顿）</li><li><strong>自定义域名替换</strong>（可接 CDN）</li><li><strong>跟随系统 &#x2F; 明亮 &#x2F; 暗色 主题</strong></li><li><strong>统计面板</strong>（总数、总大小、最后上传时间）</li></ul><h2 id="界面预览"><a href="#界面预览" class="headerlink" title="界面预览"></a>界面预览</h2><div align="center">  <img                       lazyload                     src="/images/loading.svg"                     data-src="https://lsky-pro.fengmayou.top/u4PqWE.png"                      width="80%" alt="主界面"                 >  <img                       lazyload                     src="/images/loading.svg"                     data-src="https://lsky-pro.fengmayou.top/SVE0OA.png"                      width="80%" alt="设置"                 ></div><p>UI 是用 <strong>Python + CustomTkinter</strong> 做的，风格类似 Windows 11 Fluent 设计，支持暗色模式，观感比传统 Tkinter 好很多。</p><h2 id="GitHub"><a href="#GitHub" class="headerlink" title="GitHub"></a>GitHub</h2><p>如果你认为这个项目不错可以去Github👇看看，好的话给我一个✨<strong>Star</strong></p><a class="button center large" href='https://github.com/fengjiayou/GitHubImageUploader' rel="external nofollow noreferrer" title='GitHub'><i class='fa-brands fa-github'></i> GitHub</a><p>我欢迎任何人的 PR 和 Issue，不管是修 bug、加功能还是提建议。</p><blockquote><p>你的每一个想法，都可能让这个工具更好用。</p></blockquote>]]></content>
+    
+    
+    <summary type="html">这是一个因为不满于picgo只能管理提供其上传的内容而开发的GitHub图床工具</summary>
+    
+    
+    
+    <category term="学习" scheme="https://blog.fengmayou.top/categories/%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="图床" scheme="https://blog.fengmayou.top/tags/%E5%9B%BE%E5%BA%8A/"/>
+    
+    <category term="GitHub" scheme="https://blog.fengmayou.top/tags/GitHub/"/>
+    
+  </entry>
   
   <entry>
     <title>Shadowsocks 技术全解：原理、加密与抗封锁机制详解</title>
@@ -64,11 +87,11 @@
     
     <category term="代理" scheme="https://blog.fengmayou.top/tags/%E4%BB%A3%E7%90%86/"/>
     
+    <category term="教程" scheme="https://blog.fengmayou.top/tags/%E6%95%99%E7%A8%8B/"/>
+    
     <category term="squid" scheme="https://blog.fengmayou.top/tags/squid/"/>
     
     <category term="Liunx" scheme="https://blog.fengmayou.top/tags/Liunx/"/>
-    
-    <category term="教程" scheme="https://blog.fengmayou.top/tags/%E6%95%99%E7%A8%8B/"/>
     
   </entry>
   
@@ -89,11 +112,11 @@
     <category term="教程" scheme="https://blog.fengmayou.top/categories/%E6%95%99%E7%A8%8B/"/>
     
     
-    <category term="教程" scheme="https://blog.fengmayou.top/tags/%E6%95%99%E7%A8%8B/"/>
-    
     <category term="图床" scheme="https://blog.fengmayou.top/tags/%E5%9B%BE%E5%BA%8A/"/>
     
     <category term="头图" scheme="https://blog.fengmayou.top/tags/%E5%A4%B4%E5%9B%BE/"/>
+    
+    <category term="教程" scheme="https://blog.fengmayou.top/tags/%E6%95%99%E7%A8%8B/"/>
     
   </entry>
   
@@ -137,9 +160,9 @@
     <category term="教程" scheme="https://blog.fengmayou.top/categories/%E6%95%99%E7%A8%8B/"/>
     
     
-    <category term="Liunx" scheme="https://blog.fengmayou.top/tags/Liunx/"/>
-    
     <category term="教程" scheme="https://blog.fengmayou.top/tags/%E6%95%99%E7%A8%8B/"/>
+    
+    <category term="Liunx" scheme="https://blog.fengmayou.top/tags/Liunx/"/>
     
     <category term="SMB" scheme="https://blog.fengmayou.top/tags/SMB/"/>
     
