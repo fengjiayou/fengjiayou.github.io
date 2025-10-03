@@ -780,15 +780,26 @@
 		<div class="w-full md:w-48 shrink-0 md:sticky md:top-[var(--navbar-height)] h-fit sm:py-6">
 			<nav class="flex md:block overflow-x-auto scrollbar-hide pb-4 md:pb-0 gap-2">
 				
-				<a href="#工具" class="whitespace-nowrap md:whitespace-normal block px-3 py-2 rounded-lg 
+				<a href="#资源" class="whitespace-nowrap md:whitespace-normal block px-3 py-2 rounded-lg 
                    hover:bg-second-background-color hover:text-primary hover:scale-102 
                    transition-all duration-200 border border-transparent 
                    hover:border-second-background-color
                           shrink-0 font-medium
                           bookmark-nav-item"
-                   data-category="工具">
-					<i class="fa-regular fa-tools mr-2 w-6 h-6"></i>
-					工具
+                   data-category="资源">
+					<i class="fa-regular fa-regular fa-mug-saucer mr-2 w-6 h-6"></i>
+					资源
+				</a>
+				
+				<a href="#ai-工具" class="whitespace-nowrap md:whitespace-normal block px-3 py-2 rounded-lg 
+                   hover:bg-second-background-color hover:text-primary hover:scale-102 
+                   transition-all duration-200 border border-transparent 
+                   hover:border-second-background-color
+                          shrink-0 font-medium
+                          bookmark-nav-item"
+                   data-category="ai-工具">
+					<i class="fa-regular fa-regular fa-robot mr-2 w-6 h-6"></i>
+					AI 工具
 				</a>
 				
 			</nav>
@@ -797,9 +808,67 @@
 		<!-- Right Content - Bookmarks -->
 		<div class="flex-1 max-w-full">
 			
-			<section id="工具" class="mb-12">
+			<section id="资源" class="mb-12">
 				<h2 class="text-2xl font-semibold text-second-text-color mb-4 pb-2 border-b border-border-color">
-					工具
+					资源
+				</h2>
+
+				<div class="grid gap-6 lg:grid-cols-2">
+					
+					<a href="https://tsdm.cc/schedule" target="_blank" rel="noopener noreferrer" class="group block">
+						<div class="p-5 rounded-xl redefine-box-shadow-flat transition-all duration-300
+                                      hover:transform hover:-translate-y-1">
+							<div class="flex items-center gap-5">
+								<div class="w-12 h-12 rounded-xl overflow-hidden bg-second-background-color shrink-0
+                                                transform group-hover:scale-105 transition-transform duration-300">
+									<img src="https://tsdm.cc/favicon.ico" alt="天使动漫" class="w-full h-full object-cover" onerror="this.src='/images/bookmark-placeholder.svg'">
+								</div>
+								<div class="flex-1 min-w-0 flex flex-col gap-1">
+									<div class="flex items-center justify-between">
+										<h3 class="font-medium text-second-text-color group-hover:text-primary transition-colors">
+											天使动漫
+										</h3>
+										<i class="fa-regular fa-arrow-right text-third-text-color opacity-0 group-hover:opacity-100 -translate-x-1
+                                                      group-hover:translate-x-0 transition-all duration-300"></i>
+									</div>
+									<p class="text-sm text-third-text-color line-clamp-2">
+										动漫资源
+									</p>
+								</div>
+							</div>
+						</div>
+					</a>
+					
+					<a href="http://bbs.xfsub.org/" target="_blank" rel="noopener noreferrer" class="group block">
+						<div class="p-5 rounded-xl redefine-box-shadow-flat transition-all duration-300
+                                      hover:transform hover:-translate-y-1">
+							<div class="flex items-center gap-5">
+								<div class="w-12 h-12 rounded-xl overflow-hidden bg-second-background-color shrink-0
+                                                transform group-hover:scale-105 transition-transform duration-300">
+									<img src="https://static.ktxp.org/favicon.ico" alt="旋风动漫" class="w-full h-full object-cover" onerror="this.src='/images/bookmark-placeholder.svg'">
+								</div>
+								<div class="flex-1 min-w-0 flex flex-col gap-1">
+									<div class="flex items-center justify-between">
+										<h3 class="font-medium text-second-text-color group-hover:text-primary transition-colors">
+											旋风动漫
+										</h3>
+										<i class="fa-regular fa-arrow-right text-third-text-color opacity-0 group-hover:opacity-100 -translate-x-1
+                                                      group-hover:translate-x-0 transition-all duration-300"></i>
+									</div>
+									<p class="text-sm text-third-text-color line-clamp-2">
+										动漫资源
+									</p>
+								</div>
+							</div>
+						</div>
+					</a>
+					
+				</div>
+			</section>
+			
+			<section id="ai-工具" class="mb-12">
+				<h2 class="text-2xl font-semibold text-second-text-color mb-4 pb-2 border-b border-border-color">
+					AI 工具
 				</h2>
 
 				<div class="grid gap-6 lg:grid-cols-2">
@@ -810,7 +879,7 @@
 							<div class="flex items-center gap-5">
 								<div class="w-12 h-12 rounded-xl overflow-hidden bg-second-background-color shrink-0
                                                 transform group-hover:scale-105 transition-transform duration-300">
-									<img src="https://chat.openai.com/favicon.ico" alt="ChatGPT" class="w-full h-full object-cover" onerror="this.src='/images/bookmark-placeholder.svg'">
+									<img src="https://chatgpt.com/favicon.ico" alt="ChatGPT" class="w-full h-full object-cover" onerror="this.src='/images/bookmark-placeholder.svg'">
 								</div>
 								<div class="flex-1 min-w-0 flex flex-col gap-1">
 									<div class="flex items-center justify-between">
@@ -870,6 +939,30 @@
 									</div>
 									<p class="text-sm text-third-text-color line-clamp-2">
 										杭州深度求索人工智能基础技术研究有限公司 的 AI 对话助手
+									</p>
+								</div>
+							</div>
+						</div>
+					</a>
+					
+					<a href="https://grok.com/" target="_blank" rel="noopener noreferrer" class="group block">
+						<div class="p-5 rounded-xl redefine-box-shadow-flat transition-all duration-300
+                                      hover:transform hover:-translate-y-1">
+							<div class="flex items-center gap-5">
+								<div class="w-12 h-12 rounded-xl overflow-hidden bg-second-background-color shrink-0
+                                                transform group-hover:scale-105 transition-transform duration-300">
+									<img src="https://grok.com/favicon.ico" alt="Grok" class="w-full h-full object-cover" onerror="this.src='/images/bookmark-placeholder.svg'">
+								</div>
+								<div class="flex-1 min-w-0 flex flex-col gap-1">
+									<div class="flex items-center justify-between">
+										<h3 class="font-medium text-second-text-color group-hover:text-primary transition-colors">
+											Grok
+										</h3>
+										<i class="fa-regular fa-arrow-right text-third-text-color opacity-0 group-hover:opacity-100 -translate-x-1
+                                                      group-hover:translate-x-0 transition-all duration-300"></i>
+									</div>
+									<p class="text-sm text-third-text-color line-clamp-2">
+										由马斯克创立的人工智慧公司 xAI 推出的对话式 AI 系统
 									</p>
 								</div>
 							</div>
